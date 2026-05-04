@@ -26,15 +26,15 @@
 }}
 html,body{height:100%;background:var(--bg3)}
 body{font-family:-apple-system,'Helvetica Neue',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
-.app{max-width:430px;margin:0 auto;height:100dvh;background:var(--bg3);overflow:hidden}
-.topbar{background:var(--bg);padding:52px 18px 12px;border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:50}
+.app{max-width:430px;margin:0 auto;height:100dvh;background:var(--bg3);display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--bg);padding:52px 18px 12px;border-bottom:0.5px solid var(--border);flex-shrink:0;position:relative;z-index:50}
 .topbar-row{display:flex;align-items:center;justify-content:space-between}
 .topbar h1{font-size:20px;font-weight:600;letter-spacing:-0.3px;color:var(--text)}
 .topbar-sub{font-size:12px;color:var(--text3);margin-top:3px}
 .sync-pill{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);background:var(--bg2);border-radius:20px;padding:4px 9px}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0}
 .sync-dot.syncing{background:#f59e0b}.sync-dot.error{background:#ef4444}
-.page{display:none;padding:14px;padding-bottom:24px;height:calc(100dvh - 130px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page{display:none;padding:14px;padding-bottom:40px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .page.active{display:block}
 .card{background:var(--bg);border-radius:var(--radius);border:0.5px solid var(--border);padding:15px 16px;margin-bottom:10px}
 .card-danger{border-color:var(--danger-border);background:var(--danger-bg)}
@@ -80,7 +80,7 @@ textarea{resize:none;line-height:1.5}
 .curr-setup-row{display:flex;align-items:center;gap:7px;margin-bottom:7px}
 .curr-setup-row label{font-size:13px;color:var(--text2);min-width:44px}
 .divider{border:none;border-top:0.5px solid var(--border);margin:13px 0}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--bg);border-top:0.5px solid var(--border);display:flex;z-index:100;padding-bottom:max(env(safe-area-inset-bottom), 16px)}
+.bottom-nav{width:100%;background:var(--bg);border-top:0.5px solid var(--border);display:flex;flex-shrink:0;padding-bottom:max(env(safe-area-inset-bottom),16px)}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 13px;cursor:pointer;border:none;background:transparent;font-family:inherit;gap:3px}
 .nav-icon{font-size:22px;line-height:1}
 .nav-lbl{font-size:10px;font-weight:500;color:var(--text3)}
@@ -284,14 +284,14 @@ textarea{resize:none;line-height:1.5}
       <button class="btn-primary" id="submit-btn" onclick="submitEntry()" style="margin-top:6px;margin-bottom:32px;padding:16px">送出記帳 ✓</button>
     </div>
   </div>
-</div>
 
-<nav class="bottom-nav">
-  <button class="nav-btn" id="nav-summary" onclick="goPage('summary')"><span class="nav-icon">📊</span><span class="nav-lbl">分帳總覽</span></button>
-  <button class="nav-btn" id="nav-currency" onclick="goPage('currency')"><span class="nav-icon">💱</span><span class="nav-lbl">外幣換匯</span></button>
-  <button class="nav-btn" id="nav-add" onclick="goPage('add')"><span class="nav-icon">➕</span><span class="nav-lbl">新增消費</span></button>
-  <button class="nav-btn on" id="nav-setup" onclick="goPage('setup')"><span class="nav-icon">⚙️</span><span class="nav-lbl">設定</span></button>
-</nav>
+  <nav class="bottom-nav">
+    <button class="nav-btn" id="nav-summary" onclick="goPage('summary')"><span class="nav-icon">📊</span><span class="nav-lbl">分帳總覽</span></button>
+    <button class="nav-btn" id="nav-currency" onclick="goPage('currency')"><span class="nav-icon">💱</span><span class="nav-lbl">外幣換匯</span></button>
+    <button class="nav-btn" id="nav-add" onclick="goPage('add')"><span class="nav-icon">➕</span><span class="nav-lbl">新增消費</span></button>
+    <button class="nav-btn on" id="nav-setup" onclick="goPage('setup')"><span class="nav-icon">⚙️</span><span class="nav-lbl">設定</span></button>
+  </nav>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
