@@ -81,8 +81,8 @@ textarea{resize:none;line-height:1.5}
 .curr-setup-row{display:flex;align-items:center;gap:7px;margin-bottom:7px}
 .curr-setup-row label{font-size:13px;color:var(--text2);min-width:44px}
 .divider{border:none;border-top:0.5px solid var(--border);margin:13px 0}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:0.5px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);pointer-events:none}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 13px;cursor:pointer;border:none;background:transparent;font-family:inherit;gap:3px;pointer-events:auto}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:0.5px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 13px;cursor:pointer;border:none;background:transparent;font-family:inherit;gap:3px}
 .nav-icon{font-size:22px;line-height:1}
 .nav-lbl{font-size:10px;font-weight:500;color:var(--text3)}
 .nav-btn.on .nav-lbl{color:var(--text)}
@@ -277,26 +277,27 @@ textarea{resize:none;line-height:1.5}
         <label class="lbl">分帳類型</label>
         <div class="seg" id="split-group">
           <button class="seg-btn on" data-val="共用" onclick="selSeg(this,'split-group')">共用</button>
-          <button class="seg-btn" data-val="A獨享" onclick="selSeg(this,'split-group')">三口</button>
-          <button class="seg-btn" data-val="B獨享" onclick="selSeg(this,'split-group')">七元</button>
+          <button class="seg-btn" data-val="三口" onclick="selSeg(this,'split-group')">三口</button>
+          <button class="seg-btn" data-val="七元" onclick="selSeg(this,'split-group')">七元</button>
         </div>
       </div>
       <div class="form-row"><label class="lbl">備注</label><textarea id="f-note" rows="2" placeholder="選填，任何補充說明"></textarea></div>
-      <div style="height:80px"></div>
+      <div style="height:20px"></div>
     </div>
   </div>
 </div>
 
-<div id="submit-bar" style="display:none;position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:10px 14px;background:var(--bg3);z-index:200;box-sizing:border-box">
-  <button class="btn-primary" id="submit-btn" onclick="submitEntry()" style="padding:16px;font-size:17px;width:100%">送出記帳 ✓</button>
-</div>
-
-<nav class="bottom-nav">
+<nav class="bottom-nav" id="bottom-nav-main">
   <button class="nav-btn" id="nav-summary" onclick="goPage('summary')"><span class="nav-icon">📊</span><span class="nav-lbl">分帳總覽</span></button>
   <button class="nav-btn" id="nav-currency" onclick="goPage('currency')"><span class="nav-icon">💱</span><span class="nav-lbl">外幣換匯</span></button>
   <button class="nav-btn" id="nav-add" onclick="goPage('add')"><span class="nav-icon">➕</span><span class="nav-lbl">新增消費</span></button>
   <button class="nav-btn on" id="nav-setup" onclick="goPage('setup')"><span class="nav-icon">⚙️</span><span class="nav-lbl">設定</span></button>
 </nav>
+
+<div id="bottom-nav-submit" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));background:var(--bg3);border-top:0.5px solid var(--border)">
+  <button onclick="submitEntry()" id="submit-btn" class="btn-primary">送出記帳 ✓</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -340,8 +341,12 @@ function goPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
   document.getElementById('page-'+name).classList.add('active');
-  document.getElementById('nav-'+name).classList.add('on');
-  document.getElementById('submit-bar').style.display = name==='add' ? 'block' : 'none';
+  const navBtn=document.getElementById('nav-'+name);
+  if(navBtn) navBtn.classList.add('on');
+  const isAdd=name==='add';
+  document.getElementById('bottom-nav-main').style.display=isAdd?'none':'flex';
+  document.getElementById('bottom-nav-submit').style.display=isAdd?'block':'none';
+  if(name==='currency') renderCurrencyPage();
 }
 
 function parseCurrencies(prefix){
@@ -403,8 +408,8 @@ function applySetup(saveConfig=false){
 
   const sg=document.querySelectorAll('#split-group .seg-btn');
   sg[0].textContent='共用';sg[0].dataset.val='共用';
-  sg[1].textContent=nameA;sg[1].dataset.val=nameA+'獨享';
-  sg[2].textContent=nameB;sg[2].dataset.val=nameB+'獨享';
+  sg[1].textContent='三口';sg[1].dataset.val='三口';
+  sg[2].textContent='七元';sg[2].dataset.val='七元';
 
   const sel=document.getElementById('f-currency');
   sel.innerHTML='<option value="TWD">TWD 台幣</option>';
@@ -592,10 +597,6 @@ function updateTotalsUI(){
   document.getElementById('total-ab-half').textContent='$'+Math.round(totals.ab/2).toLocaleString();
   document.getElementById('ab-before').textContent='$'+totals.abBefore.toLocaleString();
   document.getElementById('ab-during').textContent='$'+totals.abDuring.toLocaleString();
-  document.getElementById('a-before').textContent='$'+totals.aBefore.toLocaleString();
-  document.getElementById('a-during').textContent='$'+totals.aDuring.toLocaleString();
-  document.getElementById('b-before').textContent='$'+totals.bBefore.toLocaleString();
-  document.getElementById('b-during').textContent='$'+totals.bDuring.toLocaleString();
   document.getElementById('payer-total-a').textContent='$'+payerTotals.a.toLocaleString();
   document.getElementById('payer-total-b').textContent='$'+payerTotals.b.toLocaleString();
 }
@@ -625,20 +626,19 @@ async function submitEntry(){
     }
   }
 
-  const isBefore = timing==='出發前';
+  const isBefore=timing==='出發前';
   if(split==='共用'){
     totals.ab+=twd;
-    if(isBefore) totals.abBefore+=twd; else totals.abDuring+=twd;
-  } else if(split.includes(nameA)){
+    if(isBefore)totals.abBefore+=twd;else totals.abDuring+=twd;
+  } else if(split==='三口'){
     totals.a+=twd;
-    if(isBefore) totals.aBefore+=twd; else totals.aDuring+=twd;
+    if(isBefore)totals.aBefore+=twd;else totals.aDuring+=twd;
   } else {
     totals.b+=twd;
-    if(isBefore) totals.bBefore+=twd; else totals.bDuring+=twd;
+    if(isBefore)totals.bBefore+=twd;else totals.bDuring+=twd;
   }
-  // 實際支出：依支付者累計
-  if(payer===nameA) payerTotals.a+=twd;
-  else if(payer===nameB) payerTotals.b+=twd;
+  if(payer===nameA)payerTotals.a+=twd;
+  else if(payer===nameB)payerTotals.b+=twd;
   entryCount++;
   updateTotalsUI();renderSetupExisting();saveState();
 
