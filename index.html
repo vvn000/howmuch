@@ -165,14 +165,42 @@ textarea{resize:none;line-height:1.5}
   <div class="page" id="page-summary">
     <div class="card" style="border-color:var(--accent-border);background:var(--accent-bg)">
       <div class="card-title card-title-accent">共用花費（台幣）</div>
-      <div class="stat-val" id="total-ab" style="font-size:32px;letter-spacing:-1px;color:var(--accent)">$0</div>
-      <div class="stat-sub" style="margin-top:6px">均分後每人負擔 <span id="total-ab-half" style="font-weight:600;color:var(--accent)">$0</span></div>
+      <div class="stat-val" id="total-ab" style="font-size:32px;letter-spacing:-1px;color:var(--accent);margin-top:6px">$0</div>
+      <div class="stat-sub" style="margin-top:6px;color:var(--accent);opacity:0.85">一人目前花費 <span id="total-ab-half" style="font-weight:600">$0</span></div>
+      <div style="margin-top:10px;border-top:0.5px solid var(--accent-border);padding-top:10px;display:flex;gap:12px">
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--accent);opacity:0.7;margin-bottom:2px">出發前</div>
+          <div style="font-size:16px;font-weight:500;color:var(--accent)" id="ab-before">$0</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--accent);opacity:0.7;margin-bottom:2px">旅遊中</div>
+          <div style="font-size:16px;font-weight:500;color:var(--accent)" id="ab-during">$0</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">實際支出</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;margin-top:-6px">誰出了多少</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px">
+        <span style="color:var(--text2)" id="payer-label-a">A</span>
+        <span style="font-weight:500;color:var(--text)" id="payer-total-a">$0</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px">
+        <span style="color:var(--text2)" id="payer-label-b">B</span>
+        <span style="font-weight:500;color:var(--text)" id="payer-total-b">$0</span>
+      </div>
     </div>
     <div class="card">
       <div class="card-title">個人花費（台幣）</div>
-      <div class="stat-grid">
-        <div class="stat"><div class="stat-lbl" id="label-a">A</div><div class="stat-val" id="total-a">$0</div><div class="stat-sub">個人消費</div></div>
-        <div class="stat"><div class="stat-lbl" id="label-b">B</div><div class="stat-val" id="total-b">$0</div><div class="stat-sub">個人消費</div></div>
+      <div class="stat-grid" style="margin-top:4px">
+        <div class="stat">
+          <div class="stat-lbl" id="label-a">A</div>
+          <div class="stat-val" id="total-a">$0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-lbl" id="label-b">B</div>
+          <div class="stat-val" id="total-b">$0</div>
+        </div>
       </div>
     </div>
   </div>
@@ -245,6 +273,13 @@ textarea{resize:none;line-height:1.5}
           <button class="seg-btn" data-val="B獨享" onclick="selSeg(this,'split-group')">七元</button>
         </div>
       </div>
+      <div class="form-row">
+        <label class="lbl">時間點</label>
+        <div class="seg" id="timing-group">
+          <button class="seg-btn on" data-val="旅遊中" onclick="selSeg(this,'timing-group')">旅遊中</button>
+          <button class="seg-btn" data-val="出發前" onclick="selSeg(this,'timing-group')">出發前</button>
+        </div>
+      </div>
       <div class="form-row"><label class="lbl">備注</label><textarea id="f-note" rows="2" placeholder="選填，任何補充說明"></textarea></div>
       <button class="btn-primary" id="submit-btn" onclick="submitEntry()" style="margin-top:6px;margin-bottom:16px;padding:16px">送出記帳 ✓</button>
     </div>
@@ -263,12 +298,13 @@ textarea{resize:none;line-height:1.5}
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbycX3YdSowaRzf1kawigSqOn9mXCaHn52TxAUlu5DIfC79mR6XFWL7UM1JY0UxFUz_E/exec";
 const STORAGE_KEY='travel_expense_v2';
 
-let nameA='A',nameB='B',currencies=[],totals={a:0,b:0,ab:0};
+let nameA='A',nameB='B',currencies=[],totals={a:0,b:0,ab:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0,abBefore:0,abDuring:0};
+let payerTotals={a:0,b:0};
 let entryCount=0,currentTrip='',setupDone=false;
 let parentCurrencies={TWD:0,USD:0};
 
 function saveState(){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({nameA,nameB,currencies,totals,entryCount,currentTrip,setupDone,parentCurrencies}));}catch(e){}
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({nameA,nameB,currencies,totals,payerTotals,entryCount,currentTrip,setupDone,parentCurrencies}));}catch(e){}
 }
 function loadState(){
   try{
@@ -276,7 +312,12 @@ function loadState(){
     if(!raw)return false;
     const s=JSON.parse(raw);
     nameA=s.nameA||'A';nameB=s.nameB||'B';
-    currencies=s.currencies||[];totals=s.totals||{a:0,b:0,ab:0};
+    currencies=s.currencies||[];
+    totals=s.totals||{a:0,b:0,ab:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0,abBefore:0,abDuring:0};
+    totals.aBefore=totals.aBefore||0;totals.aDuring=totals.aDuring||0;
+    totals.bBefore=totals.bBefore||0;totals.bDuring=totals.bDuring||0;
+    totals.abBefore=totals.abBefore||0;totals.abDuring=totals.abDuring||0;
+    payerTotals=s.payerTotals||{a:0,b:0};
     entryCount=s.entryCount||0;currentTrip=s.currentTrip||'';
     setupDone=s.setupDone||false;
     parentCurrencies=s.parentCurrencies||{TWD:0,USD:0};
@@ -328,7 +369,10 @@ function startNewTrip(){
   if(!trip){showToast('請輸入新旅行名稱');return;}
   const currs=parseCurrencies('new-curr');
   if(!currs.length){showToast('請至少設定一種當地幣');return;}
-  currentTrip=trip;currencies=currs;totals={a:0,b:0,ab:0};entryCount=0;
+  currentTrip=trip;currencies=currs;
+  totals={a:0,b:0,ab:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0,abBefore:0,abDuring:0};
+  payerTotals={a:0,b:0};
+  entryCount=0;
   parentCurrencies={
     TWD:parseFloat(document.getElementById('new-init-twd').value)||0,
     USD:parseFloat(document.getElementById('new-init-usd').value)||0
@@ -344,6 +388,8 @@ function applySetup(saveConfig=false){
   document.getElementById('subtitle').textContent=currentTrip;
   document.getElementById('label-a').textContent=nameA;
   document.getElementById('label-b').textContent=nameB;
+  document.getElementById('payer-label-a').textContent=nameA;
+  document.getElementById('payer-label-b').textContent=nameB;
 
   const pg=document.querySelectorAll('#payer-group .seg-btn');
   pg[0].textContent=nameA;pg[0].dataset.val=nameA;
@@ -538,6 +584,14 @@ function updateTotalsUI(){
   document.getElementById('total-b').textContent='$'+totals.b.toLocaleString();
   document.getElementById('total-ab').textContent='$'+totals.ab.toLocaleString();
   document.getElementById('total-ab-half').textContent='$'+Math.round(totals.ab/2).toLocaleString();
+  document.getElementById('ab-before').textContent='$'+totals.abBefore.toLocaleString();
+  document.getElementById('ab-during').textContent='$'+totals.abDuring.toLocaleString();
+  document.getElementById('a-before').textContent='$'+totals.aBefore.toLocaleString();
+  document.getElementById('a-during').textContent='$'+totals.aDuring.toLocaleString();
+  document.getElementById('b-before').textContent='$'+totals.bBefore.toLocaleString();
+  document.getElementById('b-during').textContent='$'+totals.bDuring.toLocaleString();
+  document.getElementById('payer-total-a').textContent='$'+payerTotals.a.toLocaleString();
+  document.getElementById('payer-total-b').textContent='$'+payerTotals.b.toLocaleString();
 }
 
 async function submitEntry(){
@@ -551,6 +605,7 @@ async function submitEntry(){
   const twd=parseFloat(document.getElementById('f-twd').value);
   const payer=getActiveSeg('payer-group');
   const split=getActiveSeg('split-group');
+  const timing=getActiveSeg('timing-group');
   const note=document.getElementById('f-note').value.trim();
 
   if(!date||!cat||!item||isNaN(amount)||isNaN(twd)){showToast('請填寫完整資料');return;}
@@ -564,9 +619,20 @@ async function submitEntry(){
     }
   }
 
-  if(split==='共用')totals.ab+=twd;
-  else if(split.includes(nameA))totals.a+=twd;
-  else totals.b+=twd;
+  const isBefore = timing==='出發前';
+  if(split==='共用'){
+    totals.ab+=twd;
+    if(isBefore) totals.abBefore+=twd; else totals.abDuring+=twd;
+  } else if(split.includes(nameA)){
+    totals.a+=twd;
+    if(isBefore) totals.aBefore+=twd; else totals.aDuring+=twd;
+  } else {
+    totals.b+=twd;
+    if(isBefore) totals.bBefore+=twd; else totals.bDuring+=twd;
+  }
+  // 實際支出：依支付者累計
+  if(payer===nameA) payerTotals.a+=twd;
+  else if(payer===nameB) payerTotals.b+=twd;
   entryCount++;
   updateTotalsUI();renderSetupExisting();saveState();
 
@@ -581,7 +647,7 @@ async function submitEntry(){
   btn.disabled=true;btn.textContent='同步中…';btn.style.opacity='0.6';setSyncStatus('syncing');
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:'expense',trip:currentTrip,date,category:cat,item,currency,amount,rate,twd,payMethod,payer,split,note})});
+      body:JSON.stringify({type:'expense',trip:currentTrip,date,category:cat,item,currency,amount,rate,twd,payMethod,payer,split,timing,note})});
     setSyncStatus('ok');
     btn.textContent='✓ 已送出！';btn.style.background='#16a34a';btn.style.opacity='1';
     showToast('✓ 已記錄並同步到試算表');
