@@ -535,13 +535,6 @@ function updateTotalsUI(){
   document.getElementById('total-b').textContent='$'+totals.b.toLocaleString();
   document.getElementById('total-ab').textContent='$'+totals.ab.toLocaleString();
   document.getElementById('total-ab-half').textContent='$'+Math.round(totals.ab/2).toLocaleString();
-  const half=totals.ab/2,dA=totals.a+half,dB=totals.b+half,diff=Math.abs(dA-dB);
-  let settle='';
-  if(!entryCount)settle='尚無消費記錄';
-  else if(diff<1)settle='兩人目前花費相當，無需結算 ✓';
-  else if(dA>dB)settle=nameB+' 需補給 '+nameA+'　<strong>$'+Math.round(diff).toLocaleString()+'</strong>';
-  else settle=nameA+' 需補給 '+nameB+'　<strong>$'+Math.round(diff).toLocaleString()+'</strong>';
-  document.getElementById('settle-text').innerHTML=settle;
 }
 
 async function submitEntry(){
@@ -582,13 +575,18 @@ async function submitEntry(){
   document.getElementById('f-note').value='';
 
   const btn=document.getElementById('submit-btn');
-  btn.disabled=true;btn.textContent='同步中…';setSyncStatus('syncing');
+  btn.disabled=true;btn.textContent='同步中…';btn.style.opacity='0.6';setSyncStatus('syncing');
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({type:'expense',trip:currentTrip,date,category:cat,item,currency,amount,rate,twd,payMethod,payer,split,note})});
-    setSyncStatus('ok');showToast('✓ 已記錄並同步到試算表');
-  }catch(e){setSyncStatus('error');showToast('已記錄，但同步失敗，請檢查網路');}
-  finally{btn.disabled=false;btn.textContent='送出記帳 ✓';}
+    setSyncStatus('ok');
+    btn.textContent='✓ 已送出！';btn.style.background='#16a34a';btn.style.opacity='1';
+    showToast('✓ 已記錄並同步到試算表');
+    setTimeout(()=>{btn.style.background='';btn.textContent='送出記帳 ✓';btn.disabled=false;},1800);
+  }catch(e){
+    setSyncStatus('error');showToast('已記錄，但同步失敗，請檢查網路');
+    btn.disabled=false;btn.textContent='送出記帳 ✓';btn.style.opacity='1';
+  }
 }
 
 async function fetchConfigFromSheet(){
