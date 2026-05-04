@@ -81,8 +81,8 @@ textarea{resize:none;line-height:1.5}
 .curr-setup-row{display:flex;align-items:center;gap:7px;margin-bottom:7px}
 .curr-setup-row label{font-size:13px;color:var(--text2);min-width:44px}
 .divider{border:none;border-top:0.5px solid var(--border);margin:13px 0}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:0.5px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 13px;cursor:pointer;border:none;background:transparent;font-family:inherit;gap:3px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:0.5px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);pointer-events:none}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 13px;cursor:pointer;border:none;background:transparent;font-family:inherit;gap:3px;pointer-events:auto}
 .nav-icon{font-size:22px;line-height:1}
 .nav-lbl{font-size:10px;font-weight:500;color:var(--text3)}
 .nav-btn.on .nav-lbl{color:var(--text)}
