@@ -26,7 +26,7 @@
 }}
 html,body{height:100%;background:var(--bg3)}
 body{font-family:-apple-system,'Helvetica Neue',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
-.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg3);padding-bottom:80px}
+.app{max-width:430px;margin:0 auto;height:100dvh;background:var(--bg3);overflow:hidden}
 .topbar{background:var(--bg);padding:52px 18px 12px;border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:50}
 .topbar-row{display:flex;align-items:center;justify-content:space-between}
 .topbar h1{font-size:20px;font-weight:600;letter-spacing:-0.3px;color:var(--text)}
@@ -34,7 +34,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;color:var(--text);-we
 .sync-pill{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);background:var(--bg2);border-radius:20px;padding:4px 9px}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0}
 .sync-dot.syncing{background:#f59e0b}.sync-dot.error{background:#ef4444}
-.page{display:none;padding:14px}
+.page{display:none;padding:14px;height:calc(100dvh - 120px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .page.active{display:block}
 .card{background:var(--bg);border-radius:var(--radius);border:0.5px solid var(--border);padding:15px 16px;margin-bottom:10px}
 .card-danger{border-color:var(--danger-border);background:var(--danger-bg)}
@@ -163,19 +163,26 @@ textarea{resize:none;line-height:1.5}
 
   <!-- 分帳總覽頁 -->
   <div class="page" id="page-summary">
+    <div class="card" style="border-color:var(--accent-border);background:var(--accent-bg)">
+      <div class="card-title card-title-accent">共用花費（台幣）</div>
+      <div class="stat-val" id="total-ab" style="font-size:32px;letter-spacing:-1px;color:var(--accent)">$0</div>
+      <div class="stat-sub" style="margin-top:6px">均分後每人負擔 <span id="total-ab-half" style="font-weight:600;color:var(--accent)">$0</span></div>
+    </div>
     <div class="card">
       <div class="card-title">個人花費（台幣）</div>
       <div class="stat-grid">
-        <div class="stat"><div class="stat-lbl" id="label-a">A</div><div class="stat-val" id="total-a">$0</div><div class="stat-sub">獨享消費</div></div>
-        <div class="stat"><div class="stat-lbl" id="label-b">B</div><div class="stat-val" id="total-b">$0</div><div class="stat-sub">獨享消費</div></div>
-        <div class="stat full"><div class="stat-lbl">共用花費</div><div class="stat-val" id="total-ab">$0</div><div class="stat-sub">均分後每人負擔 <span id="total-ab-half">$0</span></div></div>
+        <div class="stat"><div class="stat-lbl" id="label-a">A</div><div class="stat-val" id="total-a">$0</div><div class="stat-sub">個人消費</div></div>
+        <div class="stat"><div class="stat-lbl" id="label-b">B</div><div class="stat-val" id="total-b">$0</div><div class="stat-sub">個人消費</div></div>
       </div>
     </div>
-
   </div>
 
   <!-- 外幣換匯頁 -->
   <div class="page" id="page-currency">
+    <div class="card">
+      <div class="card-title">當地幣餘額</div>
+      <div id="local-currency-list"><p style="font-size:14px;color:var(--text2)">完成設定後顯示</p></div>
+    </div>
     <div class="card">
       <div class="card-title">母幣餘額</div>
       <div id="parent-currency-list"><p style="font-size:14px;color:var(--text2)">完成設定後顯示</p></div>
@@ -197,10 +204,6 @@ textarea{resize:none;line-height:1.5}
       <div class="form-row"><label class="lbl">取得當地幣金額</label><input type="number" id="ex-to-amt" placeholder="0" min="0"></div>
       <div class="form-row"><label class="lbl">備注（選填）</label><input type="text" id="ex-note" placeholder="例如：機場換匯、銀行換匯"></div>
       <button class="btn-primary" id="exchange-btn" onclick="submitExchange()" style="margin-top:4px">記錄換匯 ✓</button>
-    </div>
-    <div class="card">
-      <div class="card-title">當地幣餘額</div>
-      <div id="local-currency-list"><p style="font-size:14px;color:var(--text2)">完成設定後顯示</p></div>
     </div>
   </div>
 
