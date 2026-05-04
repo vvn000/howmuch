@@ -164,6 +164,9 @@ textarea{resize:none;line-height:1.5}
 
   <!-- 分帳總覽頁 -->
   <div class="page" id="page-summary">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+      <button onclick="fetchTotalsFromSheet()" style="font-size:12px;padding:6px 12px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit">↻ 同步最新數字</button>
+    </div>
     <div class="card" style="border-color:var(--accent-border);background:var(--accent-bg)">
       <div class="card-title card-title-accent">共用花費（台幣）</div>
       <div class="stat-val" id="total-ab" style="font-size:32px;letter-spacing:-1px;color:var(--accent);margin-top:6px">$0</div>
@@ -667,12 +670,39 @@ async function submitEntry(){
 
 async function fetchConfigFromSheet(){
   try{
-    const res=await fetch(SCRIPT_URL);
+    // 讀取設定（名字、旅行名稱）
+    const res=await fetch(SCRIPT_URL+'?action=getConfig');
     const data=await res.json();
-    if(data.nameA)nameA=data.nameA;
-    if(data.nameB)nameB=data.nameB;
-    if(data.trip)currentTrip=data.trip;
+    if(data.nameA) nameA=data.nameA;
+    if(data.nameB) nameB=data.nameB;
+    if(data.trip) currentTrip=data.trip;
   }catch(e){}
+}
+
+async function fetchTotalsFromSheet(){
+  try{
+    setSyncStatus('syncing');
+    const url=SCRIPT_URL+'?action=getTotals&trip='+encodeURIComponent(currentTrip)+'&nameA='+encodeURIComponent(nameA)+'&nameB='+encodeURIComponent(nameB);
+    const res=await fetch(url);
+    const data=await res.json();
+    if(data.totals){
+      totals=data.totals;
+      totals.aBefore=totals.aBefore||0;
+      totals.aDuring=totals.aDuring||0;
+      totals.bBefore=totals.bBefore||0;
+      totals.bDuring=totals.bDuring||0;
+      totals.abBefore=totals.abBefore||0;
+      totals.abDuring=totals.abDuring||0;
+    }
+    if(data.payerTotals) payerTotals=data.payerTotals;
+    if(data.entryCount!==undefined) entryCount=data.entryCount;
+    saveState();
+    updateTotalsUI();
+    renderSetupExisting();
+    setSyncStatus('ok');
+  }catch(e){
+    setSyncStatus('error');
+  }
 }
 
 function showToast(msg){
@@ -685,6 +715,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   if(loadState()&&setupDone){
     await fetchConfigFromSheet();
     applySetup(false);
+    fetchTotalsFromSheet();
   }
 });
 </script>
