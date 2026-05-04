@@ -294,8 +294,9 @@ textarea{resize:none;line-height:1.5}
   <button class="nav-btn on" id="nav-setup" onclick="goPage('setup')"><span class="nav-icon">⚙️</span><span class="nav-lbl">設定</span></button>
 </nav>
 
-<div id="bottom-nav-submit" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));background:var(--bg3);border-top:0.5px solid var(--border)">
-  <button onclick="submitEntry()" id="submit-btn" class="btn-primary">送出記帳 ✓</button>
+<div id="bottom-nav-submit" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));background:var(--bg3);border-top:0.5px solid var(--border);flex-direction:row;gap:10px;align-items:center">
+  <button onclick="submitEntry()" id="submit-btn" class="btn-primary" style="flex:1;padding:16px">送出記帳 ✓</button>
+  <button onclick="goPage('summary')" style="flex:0 0 68px;padding:16px 0;font-size:14px;font-weight:500;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit">取消</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -345,7 +346,7 @@ function goPage(name){
   if(navBtn) navBtn.classList.add('on');
   const isAdd=name==='add';
   document.getElementById('bottom-nav-main').style.display=isAdd?'none':'flex';
-  document.getElementById('bottom-nav-submit').style.display=isAdd?'block':'none';
+  document.getElementById('bottom-nav-submit').style.display=isAdd?'flex':'none';
   if(name==='currency') renderCurrencyPage();
 }
 
