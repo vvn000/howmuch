@@ -254,7 +254,7 @@ textarea{resize:none;line-height:1.5}
         <div class="form-row"><label class="lbl">幣值</label><select id="f-currency" onchange="onCurrencyChange()"><option value="TWD">TWD 台幣</option></select></div>
         <div class="form-row"><label class="lbl">消費金額</label><input type="number" id="f-amount" placeholder="0" min="0" oninput="calcTWD()"></div>
       </div>
-      <div class="form-row" id="rate-row" style="visibility:hidden">
+      <div class="form-row" id="rate-row" style="display:none">
         <label class="lbl">匯率（1 <span id="curr-unit">外幣</span> = ? 台幣）<span id="rate-status" style="font-size:11px;color:var(--text3);margin-left:6px"></span></label>
         <input type="number" id="f-rate" placeholder="抓取中…" step="0.0001" min="0" oninput="calcTWD()">
       </div>
@@ -282,9 +282,13 @@ textarea{resize:none;line-height:1.5}
         </div>
       </div>
       <div class="form-row"><label class="lbl">備注</label><textarea id="f-note" rows="2" placeholder="選填，任何補充說明"></textarea></div>
-      <button class="btn-primary" id="submit-btn" onclick="submitEntry()" style="margin-top:6px;padding:18px;font-size:17px">送出記帳 ✓</button>
+      <div style="height:80px"></div>
     </div>
   </div>
+</div>
+
+<div id="submit-bar" style="display:none;position:fixed;bottom:60px;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:10px 14px;background:var(--bg3);z-index:200;box-sizing:border-box">
+  <button class="btn-primary" id="submit-btn" onclick="submitEntry()" style="padding:16px;font-size:17px;width:100%">送出記帳 ✓</button>
 </div>
 
 <nav class="bottom-nav">
@@ -337,6 +341,7 @@ function goPage(name){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
   document.getElementById('page-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('on');
+  document.getElementById('submit-bar').style.display = name==='add' ? 'block' : 'none';
 }
 
 function parseCurrencies(prefix){
@@ -531,7 +536,7 @@ async function submitExchange(){
 async function onCurrencyChange(){
   const curr=document.getElementById('f-currency').value;
   const isTWD=curr==='TWD';
-  document.getElementById('rate-row').style.visibility=isTWD?'hidden':'visible';
+  document.getElementById('rate-row').style.display=isTWD?'none':'block';
   document.getElementById('curr-unit').textContent=curr;
   if(!isTWD)await fetchRate(curr);
   calcTWD();
