@@ -355,6 +355,9 @@ textarea{resize:none;line-height:1.5}
 
   <!-- ── 外幣換匯頁 ── -->
   <div class="page" id="page-currency">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+      <button onclick="fetchExchangeHistoryFromSheet().then(()=>renderCurrencyPage())" style="font-size:13px;padding:8px 14px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;min-height:44px">↻ 同步換匯</button>
+    </div>
     <div class="card">
       <div class="card-title">當地幣餘額</div>
       <div id="local-currency-list"><p style="font-size:14px;color:var(--text2)">完成設定後顯示</p></div>
@@ -533,7 +536,7 @@ function goPage(name){
   const isAdd=name==='add';
   document.getElementById('bottom-nav-main').style.display=isAdd?'none':'flex';
   document.getElementById('bottom-nav-submit').style.display=isAdd?'flex':'none';
-  if(name==='currency')renderCurrencyPage();
+  if(name==='currency'){fetchExchangeHistoryFromSheet().then(()=>renderCurrencyPage());}
   if(name==='add'){initQuickEntry();setTimeout(()=>{document.getElementById('f-amount').focus();},100);}
 }
 
@@ -1058,6 +1061,21 @@ async function fetchConfigFromSheet(){
     if(data.trip)currentTrip=data.trip;
   }catch(e){}
 }
+// ── 換匯歷史同步 ──
+async function fetchExchangeHistoryFromSheet(){
+  if(!currentTrip)return;
+  try{
+    setSyncStatus('syncing');
+    const res=await fetch(SCRIPT_URL+'?action=getExchangeHistory&trip='+encodeURIComponent(currentTrip));
+    const data=await res.json();
+    if(data.history&&Array.isArray(data.history)){
+      exchangeHistory=data.history;
+      saveState();
+    }
+    setSyncStatus('ok');
+  }catch(e){setSyncStatus('error');}
+}
+
 async function fetchTotalsFromSheet(){
   try{
     setSyncStatus('syncing');
