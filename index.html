@@ -119,12 +119,15 @@ textarea{resize:none;line-height:1.5}
 .qc-opt:hover{background:var(--bg2)}
 .qc-opt.sel{font-weight:500;color:var(--accent)}
 .cat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:14px}
-.cat-btn{padding:9px 4px;text-align:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:11px;font-weight:500;color:var(--text2);transition:all 0.15s;font-family:inherit;border:none}
+.cat-btn{padding:12px 4px;text-align:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all 0.15s;font-family:inherit;border:none;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .cat-btn.on{background:var(--text);color:var(--bg)}
+.error-banner{display:none;background:var(--danger-bg);border:0.5px solid var(--danger-border);border-radius:var(--radius-sm);padding:10px 14px;margin-top:10px;font-size:13px;color:var(--danger);align-items:center;gap:10px}
+.error-banner.show{display:flex}
+.error-banner-retry{font-size:12px;font-weight:500;color:var(--danger);background:transparent;border:0.5px solid var(--danger-border);border-radius:var(--radius-sm);padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
 .quick-item-input{width:100%;font-size:15px;color:var(--text);border:none;border-bottom:0.5px solid var(--border2);background:transparent;padding:4px 0 10px;outline:none;margin-bottom:14px;font-family:inherit}
 .auto-section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:8px}
 .pills-row{display:flex;gap:6px;flex-wrap:wrap}
-.qpill{position:relative;font-size:11px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);border-radius:20px;padding:5px 11px;cursor:pointer;transition:all 0.15s}
+.qpill{position:relative;font-size:13px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);border-radius:20px;padding:10px 14px;cursor:pointer;transition:all 0.15s;min-height:44px;display:flex;align-items:center}
 .qpill.open{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border)}
 .qpill-popup{display:none;position:absolute;bottom:calc(100% + 6px);left:0;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:6px;z-index:300;min-width:110px;white-space:nowrap}
 .qpill-popup.show{display:block}
@@ -167,9 +170,8 @@ textarea{resize:none;line-height:1.5}
   <div class="page active" id="page-setup">
     <div id="setup-first">
       <div class="card">
-        <div class="card-title">消費者名稱（一次設定，永久沿用）</div>
-        <div class="form-row"><label class="lbl">消費者 A</label><input type="text" id="name-a" placeholder="例如：小明"></div>
-        <div class="form-row"><label class="lbl">消費者 B</label><input type="text" id="name-b" placeholder="例如：小美"></div>
+        <div class="card-title">旅行成員</div>
+        <div class="info-row"><span class="k">成員</span><span class="v">三口 / 七元</span></div>
       </div>
       <div class="card">
         <div class="card-title">旅行名稱</div>
@@ -246,10 +248,8 @@ textarea{resize:none;line-height:1.5}
         </div>
       </div>
       <div class="card">
-        <div class="card-title">修改消費者名稱</div>
-        <div class="form-row"><label class="lbl">消費者 A</label><input type="text" id="edit-name-a"></div>
-        <div class="form-row"><label class="lbl">消費者 B</label><input type="text" id="edit-name-b"></div>
-        <button class="btn-secondary" onclick="saveNames()">儲存名稱</button>
+        <div class="card-title">旅行成員</div>
+        <div class="info-row"><span class="k">成員</span><span class="v">三口 / 七元</span></div>
       </div>
       <div class="card card-danger">
         <div class="card-title card-title-danger">開始新旅行</div>
@@ -312,35 +312,44 @@ textarea{resize:none;line-height:1.5}
   <!-- ── 分帳總覽頁 ── -->
   <div class="page" id="page-summary">
     <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-      <button onclick="fetchTotalsFromSheet()" style="font-size:12px;padding:6px 12px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit">↻ 同步最新數字</button>
+      <button onclick="fetchTotalsFromSheet()" style="font-size:13px;padding:8px 14px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;min-height:44px">↻ 同步最新</button>
     </div>
     <div class="card" style="border-color:var(--accent-border);background:var(--accent-bg)">
       <div class="card-title card-title-accent">共用花費（台幣）</div>
-      <div id="total-ab" style="font-size:32px;font-weight:600;letter-spacing:-1px;color:var(--accent);margin-top:6px">$0</div>
-      <div style="font-size:12px;color:var(--accent);opacity:0.85;margin-top:6px">一人目前花費 <span id="total-ab-half" style="font-weight:600">$0</span></div>
+      <div id="total-ab" style="font-size:36px;font-weight:600;letter-spacing:-1px;color:var(--accent);margin-top:6px">$0</div>
       <div style="margin-top:10px;border-top:0.5px solid var(--accent-border);padding-top:10px;display:flex;gap:12px">
-        <div style="flex:1"><div style="font-size:11px;color:var(--accent);opacity:0.7;margin-bottom:2px">出發前</div><div style="font-size:16px;font-weight:500;color:var(--accent)" id="ab-before">$0</div></div>
-        <div style="flex:1"><div style="font-size:11px;color:var(--accent);opacity:0.7;margin-bottom:2px">旅遊中</div><div style="font-size:16px;font-weight:500;color:var(--accent)" id="ab-during">$0</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">實際支出</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;margin-top:-6px">誰出了多少</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px;border-bottom:0.5px solid var(--border)">
-        <span style="color:var(--text2)" id="payer-label-a">A</span>
-        <span style="font-weight:500;color:var(--text)" id="payer-total-a">$0</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px">
-        <span style="color:var(--text2)" id="payer-label-b">B</span>
-        <span style="font-weight:500;color:var(--text)" id="payer-total-b">$0</span>
+        <div style="flex:1"><div style="font-size:12px;color:var(--accent);opacity:0.7;margin-bottom:4px">出發前</div><div style="font-size:18px;font-weight:500;color:var(--accent)" id="ab-before">$0</div></div>
+        <div style="flex:1"><div style="font-size:12px;color:var(--accent);opacity:0.7;margin-bottom:4px">旅遊中</div><div style="font-size:18px;font-weight:500;color:var(--accent)" id="ab-during">$0</div></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">個人花費（台幣）</div>
       <div class="stat-grid" style="margin-top:4px">
-        <div class="stat"><div class="stat-lbl" id="label-a">A</div><div class="stat-val" id="total-a">$0</div></div>
-        <div class="stat"><div class="stat-lbl" id="label-b">B</div><div class="stat-val" id="total-b">$0</div></div>
+        <div class="stat">
+          <div class="stat-lbl" id="label-a">三口</div>
+          <div class="stat-val" id="total-a">$0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-lbl" id="label-b">七元</div>
+          <div class="stat-val" id="total-b">$0</div>
+        </div>
       </div>
+    </div>
+    <div class="card">
+      <div class="card-title">實際支出</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px;margin-top:-4px">誰出了多少錢</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:15px;border-bottom:0.5px solid var(--border)">
+        <span style="color:var(--text2)" id="payer-label-a">三口</span>
+        <span style="font-weight:500;color:var(--text)" id="payer-total-a">$0</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:15px">
+        <span style="color:var(--text2)" id="payer-label-b">七元</span>
+        <span style="font-weight:500;color:var(--text)" id="payer-total-b">$0</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">記帳筆數</div>
+      <div style="font-size:28px;font-weight:600;color:var(--text)" id="summary-count">0 筆</div>
     </div>
   </div>
 
@@ -395,13 +404,13 @@ textarea{resize:none;line-height:1.5}
         </div>
       </div>
       <div class="cat-grid" id="cat-grid">
-        <button class="cat-btn" onclick="selCat(this)" data-val="餐飲">餐飲</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="交通">交通</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="住宿">住宿</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="購物">購物</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="門票 / 景點">門票</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="機票">機票</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="其他">其他</button>
+        <button class="cat-btn" onclick="selCat(this)" data-val="餐飲">🍜 餐飲</button>
+        <button class="cat-btn" onclick="selCat(this)" data-val="交通">🚌 交通</button>
+        <button class="cat-btn" onclick="selCat(this)" data-val="住宿">🏨 住宿</button>
+        <button class="cat-btn" onclick="selCat(this)" data-val="購物">🛍 購物</button>
+        <button class="cat-btn" onclick="selCat(this)" data-val="門票 / 景點">🎟 門票</button>
+        <button class="cat-btn" onclick="selCat(this)" data-val="機票">✈️ 機票</button>
+        <button class="cat-btn" onclick="selCat(this)" data-val="其他">📦 其他</button>
       </div>
       <input class="quick-item-input" type="text" id="f-item" placeholder="項目說明（選填）">
       <div class="divider" style="margin-bottom:12px"></div>
@@ -453,9 +462,15 @@ textarea{resize:none;line-height:1.5}
   <button class="nav-btn on" id="nav-setup" onclick="goPage('setup')"><span class="nav-icon">⚙️</span><span class="nav-lbl">設定</span></button>
 </nav>
 
-<div id="bottom-nav-submit" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));background:var(--bg3);border-top:0.5px solid var(--border);flex-direction:row;gap:10px;align-items:center">
-  <button onclick="submitEntry()" id="submit-btn" class="btn-primary" style="flex:1;padding:16px">送出記帳 ✓</button>
-  <button onclick="goPage('summary')" style="flex:0 0 68px;padding:16px 0;font-size:14px;font-weight:500;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit">取消</button>
+<div id="bottom-nav-submit" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));background:var(--bg3);border-top:0.5px solid var(--border);flex-direction:column;gap:8px">
+  <div class="error-banner" id="submit-error">
+    <span style="flex:1">⚠️ 同步失敗，資料已暫存</span>
+    <button class="error-banner-retry" onclick="retryLastSubmit()">重試</button>
+  </div>
+  <div style="display:flex;flex-direction:row;gap:10px;align-items:center">
+    <button onclick="submitEntry()" id="submit-btn" class="btn-primary" style="flex:1;padding:16px">送出記帳 ✓</button>
+    <button onclick="goPage('summary')" style="flex:0 0 68px;padding:16px 0;font-size:14px;font-weight:500;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit">取消</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -474,7 +489,8 @@ const CURR_LIST=[
   {code:'USD',flag:'🇺🇸',name:'美金'},
 ];
 
-let nameA='A',nameB='B',currencies=[],totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
+const NAME_A='三口',NAME_B='七元';
+let nameA=NAME_A,nameB=NAME_B,currencies=[],totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
 let payerTotals={a:0,b:0};
 let entryCount=0,currentTrip='',setupDone=false;
 let parentCurrencies={TWD:0,USD:0};
@@ -489,7 +505,7 @@ function loadState(){
     const raw=localStorage.getItem(STORAGE_KEY);
     if(!raw)return false;
     const s=JSON.parse(raw);
-    nameA=s.nameA||'A';nameB=s.nameB||'B';
+    nameA=NAME_A;nameB=NAME_B;
     currencies=s.currencies||[];
     totals=s.totals||{a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
     ['abBefore','abDuring','aBefore','aDuring','bBefore','bDuring'].forEach(k=>{totals[k]=totals[k]||0;});
@@ -576,10 +592,7 @@ function getCurrFromSlot(i,suffix){
 
 // ── 設定 ──
 function confirmFirstSetup(){
-  const na=document.getElementById('name-a').value.trim();
-  const nb=document.getElementById('name-b').value.trim();
   const trip=document.getElementById('trip-name-first').value.trim();
-  if(!na||!nb){showToast('請輸入兩位消費者的名字');return;}
   if(!trip){showToast('請輸入旅行名稱');return;}
   const currs=[];
   for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'first');if(c)currs.push(c);}
@@ -588,7 +601,7 @@ function confirmFirstSetup(){
   if(invalid.length){
     if(!confirm(invalid.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？')){return;}
   }
-  nameA=na;nameB=nb;currentTrip=trip;
+  nameA=NAME_A;nameB=NAME_B;currentTrip=trip;
   currencies=currs.map(c=>({...c,remaining:c.init||0}));
   // 清除舊版本 localStorage 殘留
   try{localStorage.removeItem('travel_expense_v1');localStorage.removeItem('travel_expense_v2');localStorage.removeItem('travel_expense_v3');}catch(e){}
@@ -629,8 +642,6 @@ function applySetup(saveConfig=false){
   document.getElementById('info-trip').textContent=currentTrip;
   document.getElementById('info-names').textContent=nameA+' / '+nameB;
   document.getElementById('info-count').textContent=entryCount+' 筆';
-  document.getElementById('edit-name-a').value=nameA;
-  document.getElementById('edit-name-b').value=nameB;
 
   // 更新幣值 popup
   buildCurrPopup();
@@ -668,10 +679,7 @@ function applySetup(saveConfig=false){
 }
 
 function saveNames(){
-  const na=document.getElementById('edit-name-a').value.trim();
-  const nb=document.getElementById('edit-name-b').value.trim();
-  if(!na||!nb){showToast('請輸入名字');return;}
-  nameA=na;nameB=nb;applySetup(true);showToast('✓ 名稱已更新');
+  nameA=NAME_A;nameB=NAME_B;applySetup(true);showToast('✓ 名稱已更新');
 }
 
 // ── 幣值 popup ──
@@ -750,8 +758,9 @@ function selPayerPill(opt,e){
   document.getElementById('pill-payer').classList.remove('open');
 }
 function setPopupSel(popupId,val){
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
+  document.querySelectorAll('#'+popupId+' .qpill-opt').forEach(o=>{
+    o.classList.toggle('sel',o.textContent===val);
+  });
 }
 function togglePill(pillId,popupId){
   const pill=document.getElementById(pillId);
@@ -1007,12 +1016,19 @@ async function submitEntry(){
   const btn=document.getElementById('submit-btn');
   btn.disabled=true;btn.textContent='✓ 已送出！';btn.classList.add('success');
   setSyncStatus('syncing');
+  document.getElementById('submit-error').classList.remove('show');
+
+  const payload={type:'expense',trip:currentTrip,date,category:cat,item,currency:curr,amount,rate,twd,payMethod,payer,split,timing,note:''};
 
   try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:'expense',trip:currentTrip,date,category:cat,item,currency:curr,amount,rate,twd,payMethod,payer,split,timing,note:''})});
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     setSyncStatus('ok');
-  }catch(e){setSyncStatus('error');}
+    window._lastFailedPayload=null;
+  }catch(e){
+    setSyncStatus('error');
+    window._lastFailedPayload=payload;
+    document.getElementById('submit-error').classList.add('show');
+  }
   setTimeout(()=>{
     btn.disabled=false;btn.textContent='送出記帳 ✓';btn.classList.remove('success');
     document.getElementById('f-amount').focus();
@@ -1024,11 +1040,12 @@ function updateTotalsUI(){
   document.getElementById('total-a').textContent='$'+totals.a.toLocaleString();
   document.getElementById('total-b').textContent='$'+totals.b.toLocaleString();
   document.getElementById('total-ab').textContent='$'+totals.ab.toLocaleString();
-  document.getElementById('total-ab-half').textContent='$'+Math.round(totals.ab/2).toLocaleString();
   document.getElementById('ab-before').textContent='$'+totals.abBefore.toLocaleString();
   document.getElementById('ab-during').textContent='$'+totals.abDuring.toLocaleString();
   document.getElementById('payer-total-a').textContent='$'+payerTotals.a.toLocaleString();
   document.getElementById('payer-total-b').textContent='$'+payerTotals.b.toLocaleString();
+  const sc=document.getElementById('summary-count');
+  if(sc)sc.textContent=entryCount+' 筆';
 }
 
 // ── 同步 ──
@@ -1055,6 +1072,7 @@ async function fetchTotalsFromSheet(){
     if(data.entryCount!==undefined)entryCount=data.entryCount;
     saveState();updateTotalsUI();
     document.getElementById('info-count').textContent=entryCount+' 筆';
+    const sc=document.getElementById('summary-count');if(sc)sc.textContent=entryCount+' 筆';
     setSyncStatus('ok');
   }catch(e){setSyncStatus('error');}
 }
@@ -1108,6 +1126,19 @@ async function checkUrlParams(){
       showToast('載入失敗，請檢查網路');
     }
   }
+}
+
+async function retryLastSubmit(){
+  if(!window._lastFailedPayload){showToast('沒有待重試的資料');return;}
+  const btn=document.getElementById('submit-btn');
+  setSyncStatus('syncing');
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(window._lastFailedPayload)});
+    setSyncStatus('ok');
+    document.getElementById('submit-error').classList.remove('show');
+    window._lastFailedPayload=null;
+    showToast('✓ 同步成功');
+  }catch(e){setSyncStatus('error');showToast('仍然失敗，請檢查網路');}
 }
 
 function showToast(msg){
