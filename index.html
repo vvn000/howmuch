@@ -462,7 +462,7 @@ textarea{resize:none;line-height:1.5}
 
 <script>
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbycX3YdSowaRzf1kawigSqOn9mXCaHn52TxAUlu5DIfC79mR6XFWL7UM1JY0UxFUz_E/exec";
-const STORAGE_KEY='travel_expense_v3';
+const STORAGE_KEY='travel_expense_v4';
 const CURR_LIST=[
   {code:'JPY',flag:'🇯🇵',name:'日圓'},
   {code:'GBP',flag:'🇬🇧',name:'英鎊'},
@@ -588,7 +588,12 @@ function confirmFirstSetup(){
   if(invalid.length){
     if(!confirm(invalid.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？')){return;}
   }
-  nameA=na;nameB=nb;currentTrip=trip;currencies=currs;
+  nameA=na;nameB=nb;currentTrip=trip;
+  currencies=currs.map(c=>({...c,remaining:c.init||0}));
+  // 清除舊版本 localStorage 殘留
+  try{localStorage.removeItem('travel_expense_v1');localStorage.removeItem('travel_expense_v2');localStorage.removeItem('travel_expense_v3');}catch(e){}
+  totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
+  payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
   parentCurrencies={TWD:parseFloat(document.getElementById('init-twd').value)||0,USD:parseFloat(document.getElementById('init-usd').value)||0};
   applySetup(true);
 }
@@ -603,10 +608,13 @@ function startNewTrip(){
   if(invalidNew.length){
     if(!confirm(invalidNew.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？')){return;}
   }
-  currentTrip=trip;currencies=currs;
+  currentTrip=trip;
+  currencies=currs.map(c=>({...c,remaining:c.init||0}));
   totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
   payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
   parentCurrencies={TWD:parseFloat(document.getElementById('new-init-twd').value)||0,USD:parseFloat(document.getElementById('new-init-usd').value)||0};
+  // 清除舊版本的 localStorage 殘留
+  try{localStorage.removeItem('travel_expense_v1');localStorage.removeItem('travel_expense_v2');localStorage.removeItem('travel_expense_v3');}catch(e){}
   applySetup(true);
   showToast('✓ 新旅行「'+trip+'」已開始');
 }
