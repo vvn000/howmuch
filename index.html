@@ -202,8 +202,8 @@ textarea{resize:none;line-height:1.5}
               <input class="amt-input" type="number" id="ai1-first" placeholder="0" min="0">
             </div>
           </div>
-          <div class="divider"></div>
-          <div id="cs2-first">
+          <div id="cs2-first" style="display:none">
+            <div class="divider"></div>
             <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 2 <span style="font-size:11px;color:var(--text3)">（選填）</span></div>
             <div class="curr-grid-btn" id="cg2-first"></div>
             <button class="other-curr-btn" onclick="toggleManualCurr('m2-first','cg2-first')">✏️ 找不到幣種？手動輸入</button>
@@ -214,6 +214,7 @@ textarea{resize:none;line-height:1.5}
               <input class="amt-input" type="number" id="ai2-first" placeholder="0" min="0">
             </div>
           </div>
+          <button class="add-slot-btn" id="add-slot2-first" onclick="document.getElementById('cs2-first').style.display='block';this.style.display='none'">＋ 新增第二種幣種</button>
           <div id="cs3-first" style="display:none">
             <div class="divider"></div>
             <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 3 <span style="font-size:11px;color:var(--text3)">（選填）</span></div>
@@ -272,8 +273,8 @@ textarea{resize:none;line-height:1.5}
             <input class="amt-input" type="number" id="ai1-new" placeholder="0" min="0">
           </div>
         </div>
-        <div class="divider"></div>
-        <div id="cs2-new">
+        <div id="cs2-new" style="display:none">
+          <div class="divider"></div>
           <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 2 <span style="font-size:11px;color:var(--text3)">（選填）</span></div>
           <div class="curr-grid-btn" id="cg2-new"></div>
           <button class="other-curr-btn" onclick="toggleManualCurr('m2-new','cg2-new')">✏️ 找不到幣種？手動輸入</button>
@@ -284,6 +285,7 @@ textarea{resize:none;line-height:1.5}
             <input class="amt-input" type="number" id="ai2-new" placeholder="0" min="0">
           </div>
         </div>
+        <button class="add-slot-btn" id="add-slot2-new" onclick="document.getElementById('cs2-new').style.display='block';this.style.display='none'" style="margin-top:4px">＋ 新增第二種幣種</button>
         <div id="cs3-new" style="display:none">
           <div class="divider"></div>
           <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 3 <span style="font-size:11px;color:var(--text3)">（選填）</span></div>
