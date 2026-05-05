@@ -409,9 +409,9 @@ textarea{resize:none;line-height:1.5}
       <div class="cat-grid" id="cat-grid">
         <button class="cat-btn" onclick="selCat(this)" data-val="餐飲">🍜 餐飲</button>
         <button class="cat-btn" onclick="selCat(this)" data-val="交通">🚌 交通</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="住宿">🏨 住宿</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="購物">🛍 購物</button>
         <button class="cat-btn" onclick="selCat(this)" data-val="門票 / 景點">🎟 門票</button>
+        <button class="cat-btn" onclick="selCat(this)" data-val="購物">🛍 購物</button>
+        <button class="cat-btn" onclick="selCat(this)" data-val="住宿">🏨 住宿</button>
         <button class="cat-btn" onclick="selCat(this)" data-val="機票">✈️ 機票</button>
         <button class="cat-btn" onclick="selCat(this)" data-val="其他">📦 其他</button>
       </div>
@@ -536,7 +536,11 @@ function goPage(name){
   const isAdd=name==='add';
   document.getElementById('bottom-nav-main').style.display=isAdd?'none':'flex';
   document.getElementById('bottom-nav-submit').style.display=isAdd?'flex':'none';
-  if(name==='currency'){_serverBalances=null;fetchBalancesFromSheet().then(()=>renderCurrencyPage());}
+  if(name==='currency'){
+    // 先用舊資料立即顯示，背景再同步
+    renderCurrencyPage();
+    fetchBalancesFromSheet().then(()=>renderCurrencyPage());
+  }
   if(name==='add'){initQuickEntry();setTimeout(()=>{document.getElementById('f-amount').focus();},100);}
 }
 
@@ -799,26 +803,59 @@ document.addEventListener('click',function(e){
   if(!e.target.closest('.qpill')&&!e.target.closest('.quick-curr-pill')) closeAllPopups();
 });
 
-// ── 匯率 ──
+// ── 匯率（含快取，當天同幣種不重複抓）──
+const _rateCache={};  // { 'JPY': { rate: 0.22, date: '2025-05-01' } }
+
 async function fetchRate(curr){
   const statusEl=document.getElementById('rate-status');
   const rateEl=document.getElementById('f-rate');
-  statusEl.textContent='抓取中…';rateEl.value='';rateEl.placeholder='抓取中…';
+  const today=new Date().toISOString().split('T')[0];
+  const key=curr.trim().toUpperCase();
+
+  // 先顯示快取值（讓使用者可以立刻看到、輸入）
+  if(_rateCache[key]){
+    rateEl.value=_rateCache[key].rate.toFixed(4);
+    calcTWD();
+    if(_rateCache[key].date===today){
+      statusEl.textContent='即時匯率 ✓';
+      return; // 當天快取，不重抓
+    }
+    statusEl.textContent='更新中…';
+  } else {
+    statusEl.textContent='抓取中…';
+    rateEl.placeholder='抓取中…';
+  }
+
+  // 背景抓新匯率
   try{
-    const res=await fetch(`https://open.er-api.com/v6/latest/${curr.trim().toUpperCase()}`);
-    if(!res.ok)throw new Error('err');
+    const res=await fetch(`https://open.er-api.com/v6/latest/${key}`);
+    if(!res.ok) throw new Error('err');
     const data=await res.json();
     const rate=data.rates&&data.rates.TWD;
-    if(rate){rateEl.value=rate.toFixed(4);statusEl.textContent='即時匯率 ✓';calcTWD();}
-    else throw new Error('no TWD');
+    if(rate){
+      _rateCache[key]={rate,date:today};
+      rateEl.value=rate.toFixed(4);
+      statusEl.textContent='即時匯率 ✓';
+      calcTWD();
+    } else throw new Error('no TWD');
   }catch(e){
     try{
-      const res2=await fetch(`https://api.exchangerate-api.com/v4/latest/${curr.trim().toUpperCase()}`);
+      const res2=await fetch(`https://api.exchangerate-api.com/v4/latest/${key}`);
       const data2=await res2.json();
       const rate2=data2.rates&&data2.rates.TWD;
-      if(rate2){rateEl.value=rate2.toFixed(4);statusEl.textContent='即時匯率 ✓';calcTWD();}
-      else{statusEl.textContent='請手動填入';rateEl.placeholder='請手動填入';}
-    }catch(e2){statusEl.textContent='請手動填入';rateEl.placeholder='請手動填入';}
+      if(rate2){
+        _rateCache[key]={rate:rate2,date:today};
+        rateEl.value=rate2.toFixed(4);
+        statusEl.textContent='即時匯率 ✓';
+        calcTWD();
+      } else {
+        if(!_rateCache[key]) statusEl.textContent='請手動填入';
+        else statusEl.textContent='使用上次匯率';
+      }
+    }catch(e2){
+      if(!_rateCache[key]){ statusEl.textContent='請手動填入'; rateEl.placeholder='請手動填入'; }
+      else statusEl.textContent='使用上次匯率';
+    }
   }
 }
 function calcTWD(){
@@ -983,6 +1020,8 @@ async function submitExchange(){
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({type:'exchange',trip:currentTrip,date,fromCurr,fromAmount:fromAmt,toCurr,toAmount:toAmt,note})});
     setSyncStatus('ok');showToast('✓ '+fromAmt.toLocaleString()+' '+fromCurr+' → '+toAmt.toLocaleString()+' '+toCurr);
+    // 靜默更新換匯快取，下次進換匯頁不用等
+    fetchBalancesFromSheet().then(()=>renderCurrencyPage());
   }catch(e){setSyncStatus('error');showToast('換匯已記錄，但同步失敗');}
   finally{btn.disabled=false;btn.textContent='記錄換匯 ✓';}
 }
@@ -1056,6 +1095,8 @@ async function submitEntry(){
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     setSyncStatus('ok');
     window._lastFailedPayload=null;
+    // 現金消費後靜默更新換匯快取，下次進換匯頁不用等
+    if(payMethod==='現金') fetchBalancesFromSheet();
   }catch(e){
     setSyncStatus('error');
     window._lastFailedPayload=payload;
