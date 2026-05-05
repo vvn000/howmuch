@@ -109,8 +109,8 @@ textarea{resize:none;line-height:1.5}
 .parent-label strong{color:var(--text);font-weight:500}
 .parent-input{width:100px;font-size:15px;font-weight:500;color:var(--text);border:none;background:transparent;text-align:right;outline:none;font-family:inherit}
 /* 快速記帳 */
-.quick-amount-row{display:flex;align-items:flex-end;gap:10px;padding-bottom:16px;border-bottom:0.5px solid var(--border);margin-bottom:16px}
-.quick-amount-input{flex:1;font-size:40px;font-weight:600;color:var(--text);border:none;background:transparent;outline:none;font-family:inherit;line-height:1;min-width:0}
+.quick-amount-row{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--bg2);border-radius:var(--radius-sm);margin-bottom:16px;border:0.5px solid var(--border2)}
+.quick-amount-input{flex:1;font-size:48px;font-weight:600;color:var(--text);border:none;background:transparent;outline:none;font-family:inherit;line-height:1;min-width:0}
 .quick-curr-pill{position:relative;font-size:13px;font-weight:500;color:var(--text2);background:var(--bg2);padding:6px 11px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);cursor:pointer;white-space:nowrap;flex-shrink:0;margin-bottom:4px;transition:all 0.15s}
 .quick-curr-pill.open{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
 .qc-popup{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:6px;z-index:300;min-width:140px}
@@ -431,8 +431,9 @@ textarea{resize:none;line-height:1.5}
         </div>
         <div class="qpill" id="pill-date" onclick="togglePill('pill-date','popup-date')">
           <span id="pill-date-text">今天</span>
-          <div class="qpill-popup" id="popup-date" style="min-width:160px">
-            <div style="padding:6px 8px"><input type="date" id="f-date" style="font-size:13px;padding:6px 8px" onchange="updateDatePill()"></div>
+          <div class="qpill-popup" id="popup-date" style="min-width:180px;padding:8px 10px">
+            <div style="font-size:12px;color:var(--text2);margin-bottom:6px">選擇日期</div>
+            <input type="date" id="f-date" style="font-size:14px;padding:6px 8px;width:100%" onchange="updateDatePill()">
           </div>
         </div>
       </div>
@@ -579,6 +580,8 @@ function confirmFirstSetup(){
   const currs=[];
   for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'first');if(c)currs.push(c);}
   if(!currs.length){showToast('請至少選擇一種當地幣');return;}
+  const invalid=currs.filter(c=>c.code==='TWD'||c.code==='USD');
+  if(invalid.length){showToast('TWD 和 USD 已是母幣，請選擇其他當地幣');return;}
   nameA=na;nameB=nb;currentTrip=trip;currencies=currs;
   parentCurrencies={TWD:parseFloat(document.getElementById('init-twd').value)||0,USD:parseFloat(document.getElementById('init-usd').value)||0};
   applySetup(true);
@@ -590,6 +593,8 @@ function startNewTrip(){
   const currs=[];
   for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'new');if(c)currs.push(c);}
   if(!currs.length){showToast('請至少選擇一種當地幣');return;}
+  const invalidNew=currs.filter(c=>c.code==='TWD'||c.code==='USD');
+  if(invalidNew.length){showToast('TWD 和 USD 已是母幣，請選擇其他當地幣');return;}
   currentTrip=trip;currencies=currs;
   totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
   payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
@@ -619,10 +624,11 @@ function applySetup(saveConfig=false){
   exTo.innerHTML='';
   currencies.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=(c.flag||'')+' '+c.code;exTo.appendChild(o);});
 
-  // pill 初始化
+  // pill 初始化 — 用真名
   document.getElementById('pill-payer-text').textContent=nameA+' 支付';
-  document.getElementById('popup-payer').querySelector('.qpill-opt').textContent=nameA;
-  document.getElementById('popup-payer').querySelectorAll('.qpill-opt')[1].textContent=nameB;
+  const payerOpts=document.getElementById('popup-payer').querySelectorAll('.qpill-opt');
+  payerOpts[0].textContent=nameA;
+  payerOpts[1].textContent=nameB;
   lastPayer=nameA+' 支付';
 
   const today=new Date().toISOString().split('T')[0];
@@ -851,7 +857,14 @@ function renderCurrencyPage(){
 }
 
 function getCashSpent(code){
-  return 0; // 由試算表同步
+  // 從 exchangeHistory 和本地統計計算現金消費
+  // 現金消費由 submitEntry 時 remaining 扣除來反推
+  // 用初始+換匯取得 - 剩餘 = 已花費
+  const cur=currencies.find(c=>c.code===code);
+  if(!cur)return 0;
+  const received=exchangeHistory.filter(h=>h.toCurr===code).reduce((s,h)=>s+Number(h.toAmount),0);
+  const total=(cur.init||0)+received;
+  return Math.max(0,total-cur.remaining);
 }
 function getParentSpent(code){
   return exchangeHistory.filter(h=>h.fromCurr===code).reduce((s,h)=>s+Number(h.fromAmount),0);
