@@ -109,7 +109,7 @@ textarea{resize:none;line-height:1.5}
 .parent-label strong{color:var(--text);font-weight:500}
 .parent-input{width:100px;font-size:15px;font-weight:500;color:var(--text);border:none;background:transparent;text-align:right;outline:none;font-family:inherit}
 /* 快速記帳 */
-.quick-amount-row{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--bg2);border-radius:var(--radius-sm);margin-bottom:16px;border:0.5px solid var(--border2)}
+.quick-amount-row{display:flex;align-items:center;gap:10px;padding:18px 16px;background:var(--bg2);border-radius:var(--radius-sm);margin-bottom:16px;border:0.5px solid var(--border2)}
 .quick-amount-input{flex:1;font-size:48px;font-weight:600;color:var(--text);border:none;background:transparent;outline:none;font-family:inherit;line-height:1;min-width:0}
 .quick-curr-pill{position:relative;font-size:13px;font-weight:500;color:var(--text2);background:var(--bg2);padding:6px 11px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);cursor:pointer;white-space:nowrap;flex-shrink:0;margin-bottom:4px;transition:all 0.15s}
 .quick-curr-pill.open{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
@@ -417,8 +417,8 @@ textarea{resize:none;line-height:1.5}
         <div class="qpill" id="pill-payer" onclick="togglePill('pill-payer','popup-payer')">
           <span id="pill-payer-text">A 支付</span>
           <div class="qpill-popup" id="popup-payer">
-            <div class="qpill-opt sel" onclick="selPill('pill-payer','popup-payer','A 支付',event)">A</div>
-            <div class="qpill-opt" onclick="selPill('pill-payer','popup-payer','B 支付',event)">B</div>
+            <div class="qpill-opt sel" id="payer-opt-a" onclick="selPayerPill(this,event)">A</div>
+            <div class="qpill-opt" id="payer-opt-b" onclick="selPayerPill(this,event)">B</div>
           </div>
         </div>
         <div class="qpill" id="pill-split" onclick="togglePill('pill-split','popup-split')">
@@ -429,12 +429,9 @@ textarea{resize:none;line-height:1.5}
             <div class="qpill-opt" onclick="selPill('pill-split','popup-split','七元',event)">七元</div>
           </div>
         </div>
-        <div class="qpill" id="pill-date" onclick="togglePill('pill-date','popup-date')">
+        <div class="qpill" id="pill-date" style="position:relative;overflow:hidden">
           <span id="pill-date-text">今天</span>
-          <div class="qpill-popup" id="popup-date" style="min-width:180px;padding:8px 10px">
-            <div style="font-size:12px;color:var(--text2);margin-bottom:6px">選擇日期</div>
-            <input type="date" id="f-date" style="font-size:14px;padding:6px 8px;width:100%" onchange="updateDatePill()">
-          </div>
+          <input type="date" id="f-date" onchange="updateDatePill()" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
         </div>
       </div>
       <div style="height:16px"></div>
@@ -581,7 +578,9 @@ function confirmFirstSetup(){
   for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'first');if(c)currs.push(c);}
   if(!currs.length){showToast('請至少選擇一種當地幣');return;}
   const invalid=currs.filter(c=>c.code==='TWD'||c.code==='USD');
-  if(invalid.length){showToast('TWD 和 USD 已是母幣，請選擇其他當地幣');return;}
+  if(invalid.length){
+    if(!confirm(invalid.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？')){return;}
+  }
   nameA=na;nameB=nb;currentTrip=trip;currencies=currs;
   parentCurrencies={TWD:parseFloat(document.getElementById('init-twd').value)||0,USD:parseFloat(document.getElementById('init-usd').value)||0};
   applySetup(true);
@@ -594,7 +593,9 @@ function startNewTrip(){
   for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'new');if(c)currs.push(c);}
   if(!currs.length){showToast('請至少選擇一種當地幣');return;}
   const invalidNew=currs.filter(c=>c.code==='TWD'||c.code==='USD');
-  if(invalidNew.length){showToast('TWD 和 USD 已是母幣，請選擇其他當地幣');return;}
+  if(invalidNew.length){
+    if(!confirm(invalidNew.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？')){return;}
+  }
   currentTrip=trip;currencies=currs;
   totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
   payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
@@ -626,10 +627,12 @@ function applySetup(saveConfig=false){
 
   // pill 初始化 — 用真名
   document.getElementById('pill-payer-text').textContent=nameA+' 支付';
-  const payerOpts=document.getElementById('popup-payer').querySelectorAll('.qpill-opt');
-  payerOpts[0].textContent=nameA;
-  payerOpts[1].textContent=nameB;
+  document.getElementById('payer-opt-a').textContent=nameA;
+  document.getElementById('payer-opt-b').textContent=nameB;
   lastPayer=nameA+' 支付';
+  const payerOpts=document.getElementById('popup-payer').querySelectorAll('.qpill-opt');
+  payerOpts[0].classList.add('sel');
+  payerOpts[1].classList.remove('sel');
 
   const today=new Date().toISOString().split('T')[0];
   document.getElementById('f-date').value=today;
@@ -716,12 +719,20 @@ function initQuickEntry(){
   });
   setPopupSel('popup-split',lastSplit);
 }
-function setPopupSel(popupId,val){
-  document.querySelectorAll('#'+popupId+' .qpill-opt').forEach(o=>{
-    o.classList.toggle('sel',o.textContent===val);
-  });
-}
 function selCat(btn){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function selPayerPill(opt,e){
+  e.stopPropagation();
+  const name=opt.textContent;
+  document.getElementById('pill-payer-text').textContent=name+' 支付';
+  document.querySelectorAll('#popup-payer .qpill-opt').forEach(o=>o.classList.remove('sel'));
+  opt.classList.add('sel');
+  document.getElementById('popup-payer').classList.remove('show');
+  document.getElementById('pill-payer').classList.remove('open');
+}
+function setPopupSel(popupId,val){
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
 }
@@ -745,8 +756,6 @@ function updateDatePill(){
   if(!val){document.getElementById('pill-date-text').textContent='今天';return;}
   const d=new Date(val+'T00:00:00');
   document.getElementById('pill-date-text').textContent=(d.getMonth()+1)+'/'+(d.getDate());
-  document.getElementById('popup-date').classList.remove('show');
-  document.getElementById('pill-date').classList.remove('open');
 }
 function closeAllPopups(){
   document.querySelectorAll('.qpill-popup.show,.qc-popup.show').forEach(p=>{
@@ -831,13 +840,16 @@ function renderCurrencyPage(){
       <span class="ci-flag">${flag}</span>
       <div class="ci-info">
         <div class="ci-code">${name} ${code}</div>
-        <div class="ci-sub">已換出 ${spent.toLocaleString()} ${code}</div>
+        <div class="ci-sub">帶出 ${(parentCurrencies[code]||0).toLocaleString()} · 已換出 ${spent.toLocaleString()}</div>
       </div>
       <div class="ci-right">
         <div class="ci-remain">${remain.toLocaleString()}</div>
         <div class="ci-label">剩餘</div>
       </div>`;
     pList.appendChild(row);
+    const manRow=document.createElement('div');manRow.className='manual-row';
+    manRow.innerHTML=`<input type="number" id="parent-input-${code}" placeholder="修正帶出金額" min="0"><button class="btn-sm" onclick="setParent('${code}')">更新</button>`;
+    pList.appendChild(manRow);
   });
 
   // 換匯紀錄
@@ -870,6 +882,14 @@ function getParentSpent(code){
   return exchangeHistory.filter(h=>h.fromCurr===code).reduce((s,h)=>s+Number(h.fromAmount),0);
 }
 
+function setParent(code){
+  const val=parseFloat(document.getElementById('parent-input-'+code).value);
+  if(isNaN(val)){showToast('請輸入有效金額');return;}
+  parentCurrencies[code]=val;
+  document.getElementById('parent-input-'+code).value='';
+  saveState();renderCurrencyPage();
+  showToast(code+' 帶出金額已更新為 '+val.toLocaleString());
+}
 function setRemain(code){
   const val=parseFloat(document.getElementById('remain-input-'+code).value);
   if(isNaN(val)){showToast('請輸入有效金額');return;}
