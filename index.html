@@ -912,8 +912,7 @@ async function submitExchange(){
   const toAmt=parseFloat(document.getElementById('ex-to-amt').value);
   const note=document.getElementById('ex-note').value.trim();
   if(!date||isNaN(fromAmt)||!fromAmt||isNaN(toAmt)||!toAmt){showToast('請填寫完整換匯資料');return;}
-  // 扣母幣、加當地幣
-  if(parentCurrencies[fromCurr]!==undefined) parentCurrencies[fromCurr]=Math.max(0,parentCurrencies[fromCurr]-fromAmt);
+  // 加當地幣（母幣不直接扣，由 getParentSpent 從換匯歷史計算剩餘）
   const cur=currencies.find(c=>c.code===toCurr);
   if(cur)cur.remaining+=toAmt;
   // 記錄歷史
