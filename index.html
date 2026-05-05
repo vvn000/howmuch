@@ -166,6 +166,21 @@ textarea{resize:none;line-height:1.5}
   <!-- ── 設定頁 ── -->
   <div class="page active" id="page-setup">
     <div id="setup-first">
+      <div class="card card-accent" id="join-trip-card">
+        <div class="card-title card-title-accent">加入現有旅行</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">旅伴已建立旅行了嗎？請他傳邀請連結給你，點開即可自動加入。</p>
+        <p style="font-size:12px;color:var(--text3);line-height:1.6">或是請旅伴告訴你旅行名稱，手動輸入：</p>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input type="text" id="join-trip-name" placeholder="輸入旅行名稱" style="flex:1">
+          <button class="btn-primary" onclick="joinExistingTrip()" style="flex:0 0 auto;padding:10px 16px;font-size:14px">加入</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin:4px 0">
+        <div style="flex:1;height:0.5px;background:var(--border)"></div>
+        <span style="font-size:12px;color:var(--text3)">或</span>
+        <div style="flex:1;height:0.5px;background:var(--border)"></div>
+      </div>
+      <p style="font-size:13px;font-weight:500;color:var(--text2);margin:4px 0 10px;text-align:center">建立新旅行</p>
       <div class="card">
         <div class="card-title">消費者名稱（一次設定，永久沿用）</div>
         <div class="form-row"><label class="lbl">消費者 A</label><input type="text" id="name-a" placeholder="例如：小明"></div>
@@ -239,6 +254,11 @@ textarea{resize:none;line-height:1.5}
         <div class="info-row"><span class="k">旅行名稱</span><span class="v" id="info-trip">—</span></div>
         <div class="info-row"><span class="k">消費者</span><span class="v" id="info-names">—</span></div>
         <div class="info-row"><span class="k">記帳筆數</span><span class="v" id="info-count">0 筆</span></div>
+        <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em">邀請連結</div>
+          <p style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.6">傳給旅伴，點開即可加入同一個記帳清單，不需要任何設定。</p>
+          <button class="btn-secondary" onclick="copyInviteLink()" id="invite-btn">📋 複製邀請連結</button>
+        </div>
       </div>
       <div class="card">
         <div class="card-title">修改消費者名稱</div>
@@ -645,7 +665,9 @@ function applySetup(saveConfig=false){
   saveState();
   if(saveConfig){
     fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:'saveConfig',nameA,nameB,trip:currentTrip})});
+      body:JSON.stringify({type:'saveConfig',nameA,nameB,trip:currentTrip,
+        currencies:currencies.map(c=>({code:c.code,flag:c.flag||'',name:c.name||'',init:c.init||0}))
+      })});
   }
   document.getElementById('setup-first').style.display='none';
   document.getElementById('setup-existing').style.display='block';
@@ -1044,6 +1066,74 @@ async function fetchTotalsFromSheet(){
   }catch(e){setSyncStatus('error');}
 }
 
+function copyInviteLink(){
+  const base=window.location.href.split('?')[0];
+  const link=base+'?trip='+encodeURIComponent(currentTrip);
+  navigator.clipboard.writeText(link).then(()=>{
+    const btn=document.getElementById('invite-btn');
+    btn.textContent='✓ 已複製！';
+    setTimeout(()=>btn.textContent='📋 複製邀請連結',2000);
+  }).catch(()=>{
+    prompt('請手動複製這個連結：',link);
+  });
+}
+
+async function joinExistingTrip(){
+  const tripName=document.getElementById('join-trip-name').value.trim();
+  if(!tripName){showToast('請輸入旅行名稱');return;}
+  showToast('載入中…');
+  try{
+    const res=await fetch(SCRIPT_URL+'?action=getConfig');
+    const data=await res.json();
+    if(data.trip&&data.trip===tripName&&data.nameA&&data.nameB){
+      await loadTripFromConfig(data);
+    } else {
+      showToast('找不到此旅行，請確認名稱正確');
+    }
+  }catch(e){showToast('載入失敗，請檢查網路');}
+}
+
+async function loadTripFromConfig(data){
+  nameA=data.nameA||'A';
+  nameB=data.nameB||'B';
+  currentTrip=data.trip||'';
+  // 從試算表讀取幣種
+  try{
+    const res=await fetch(SCRIPT_URL+'?action=getCurrencies&trip='+encodeURIComponent(currentTrip));
+    const d=await res.json();
+    if(d.currencies&&d.currencies.length){
+      currencies=d.currencies.map(c=>({...c,remaining:c.init||0}));
+    }
+  }catch(e){}
+  parentCurrencies={TWD:0,USD:0};
+  totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
+  payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
+  if(!currencies.length) currencies=[{code:'JPY',flag:'🇯🇵',name:'日圓',init:0,remaining:0}];
+  applySetup(false);
+  fetchTotalsFromSheet();
+  showToast('✓ 已加入「'+currentTrip+'」');
+}
+
+async function checkUrlParams(){
+  const params=new URLSearchParams(window.location.search);
+  const tripParam=params.get('trip');
+  if(tripParam&&!setupDone){
+    showToast('正在載入旅行設定…');
+    try{
+      const res=await fetch(SCRIPT_URL+'?action=getConfig');
+      const data=await res.json();
+      if(data.trip===tripParam&&data.nameA&&data.nameB){
+        await loadTripFromConfig(data);
+      } else {
+        document.getElementById('join-trip-name').value=tripParam;
+        showToast('請確認旅行名稱後按加入');
+      }
+    }catch(e){
+      document.getElementById('join-trip-name').value=tripParam;
+    }
+  }
+}
+
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
@@ -1057,6 +1147,8 @@ window.addEventListener('DOMContentLoaded',async()=>{
     await fetchConfigFromSheet();
     applySetup(false);
     fetchTotalsFromSheet();
+  } else {
+    await checkUrlParams();
   }
 });
 </script>
