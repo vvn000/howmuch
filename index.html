@@ -955,9 +955,18 @@ async function submitEntry(){
   const rate=curr==='TWD'?'1':(document.getElementById('f-rate').value||'1');
 
   // 扣當地幣現金
-  if(payMethod==='現金'&&curr!=='TWD'){
-    const c=currencies.find(x=>x.code===curr);
-    if(c){c.remaining=Math.max(0,c.remaining-amount);const el=document.getElementById('remain-val-'+curr);if(el)el.textContent=c.remaining.toLocaleString();}
+  if(payMethod==='現金'){
+    if(curr==='TWD'){
+      // 台幣現金消費 → 扣母幣台幣
+      parentCurrencies['TWD']=Math.max(0,(parentCurrencies['TWD']||0)-amount);
+    } else if(curr==='USD'&&parentCurrencies['USD']!==undefined&&currencies.findIndex(x=>x.code==='USD')<0){
+      // USD 作為母幣（非當地幣）現金消費 → 扣母幣美金
+      parentCurrencies['USD']=Math.max(0,(parentCurrencies['USD']||0)-amount);
+    } else {
+      // 外幣現金消費 → 扣當地幣餘額
+      const c=currencies.find(x=>x.code===curr);
+      if(c){c.remaining=Math.max(0,c.remaining-amount);const el=document.getElementById('remain-val-'+curr);if(el)el.textContent=c.remaining.toLocaleString();}
+    }
   }
 
   // 統計
