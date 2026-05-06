@@ -85,7 +85,6 @@ textarea{resize:none;line-height:1.5}
 .nav-btn.on .nav-lbl{color:var(--text)}
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:11px 22px;border-radius:22px;font-size:14px;font-weight:500;opacity:0;transition:opacity 0.25s;pointer-events:none;white-space:nowrap;z-index:999}
 .toast.show{opacity:1}
-/* 幣種格狀選擇 */
 .curr-grid-btn{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:8px}
 .cg-btn{padding:10px 4px;text-align:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all 0.15s}
 .cg-btn.on{background:var(--text);border-color:var(--text)}
@@ -108,7 +107,6 @@ textarea{resize:none;line-height:1.5}
 .parent-label{font-size:13px;color:var(--text2);flex:1}
 .parent-label strong{color:var(--text);font-weight:500}
 .parent-input{width:100px;font-size:15px;font-weight:500;color:var(--text);border:none;background:transparent;text-align:right;outline:none;font-family:inherit}
-/* 快速記帳 */
 .quick-amount-row{display:flex;align-items:center;gap:10px;padding:18px 16px;background:var(--bg2);border-radius:var(--radius-sm);margin-bottom:16px;border:0.5px solid var(--border2)}
 .quick-amount-input{flex:1;font-size:48px;font-weight:600;color:var(--text);border:none;background:transparent;outline:none;font-family:inherit;line-height:1;min-width:0}
 .quick-curr-pill{position:relative;font-size:13px;font-weight:500;color:var(--text2);background:var(--bg2);padding:6px 11px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);cursor:pointer;white-space:nowrap;flex-shrink:0;margin-bottom:4px;transition:all 0.15s}
@@ -134,7 +132,6 @@ textarea{resize:none;line-height:1.5}
 .qpill-opt{padding:7px 12px;font-size:13px;color:var(--text);border-radius:var(--radius-sm);cursor:pointer}
 .qpill-opt:hover{background:var(--bg2)}
 .qpill-opt.sel{font-weight:500;color:var(--accent)}
-/* 外幣換匯頁 */
 .curr-item-row{display:flex;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--border)}
 .curr-item-row:last-child{border-bottom:none;padding-bottom:0}
 .ci-flag{font-size:20px;margin-right:10px;flex-shrink:0}
@@ -151,7 +148,6 @@ textarea{resize:none;line-height:1.5}
 .hist-arr{color:var(--text3)}
 .hist-to{font-weight:500;color:var(--text);flex:1}
 .hist-note{font-size:11px;color:var(--text3)}
-/* 手動修正 */
 .manual-row{display:flex;align-items:center;gap:6px;margin-top:8px}
 .manual-row input{flex:1;font-size:14px;padding:7px 10px}
 </style>
@@ -166,7 +162,6 @@ textarea{resize:none;line-height:1.5}
     <div class="topbar-sub" id="subtitle">請先完成初始設定</div>
   </div>
 
-  <!-- ── 設定頁 ── -->
   <div class="page active" id="page-setup">
     <div id="setup-first">
       <div class="card">
@@ -309,7 +304,6 @@ textarea{resize:none;line-height:1.5}
     </div>
   </div>
 
-  <!-- ── 分帳總覽頁 ── -->
   <div class="page" id="page-summary">
     <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
       <button onclick="fetchTotalsFromSheet()" style="font-size:13px;padding:8px 14px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;min-height:44px">↻ 同步最新</button>
@@ -325,14 +319,8 @@ textarea{resize:none;line-height:1.5}
     <div class="card">
       <div class="card-title">個人花費（台幣）</div>
       <div class="stat-grid" style="margin-top:4px">
-        <div class="stat">
-          <div class="stat-lbl" id="label-a">三口</div>
-          <div class="stat-val" id="total-a">$0</div>
-        </div>
-        <div class="stat">
-          <div class="stat-lbl" id="label-b">七元</div>
-          <div class="stat-val" id="total-b">$0</div>
-        </div>
+        <div class="stat"><div class="stat-lbl" id="label-a">三口</div><div class="stat-val" id="total-a">$0</div></div>
+        <div class="stat"><div class="stat-lbl" id="label-b">七元</div><div class="stat-val" id="total-b">$0</div></div>
       </div>
     </div>
     <div class="card">
@@ -353,7 +341,6 @@ textarea{resize:none;line-height:1.5}
     </div>
   </div>
 
-  <!-- ── 外幣換匯頁 ── -->
   <div class="page" id="page-currency">
     <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
       <button onclick="fetchBalancesFromSheet().then(()=>renderCurrencyPage())" style="font-size:13px;padding:8px 14px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;min-height:44px">↻ 同步換匯</button>
@@ -388,7 +375,6 @@ textarea{resize:none;line-height:1.5}
     </div>
   </div>
 
-  <!-- ── 新增消費頁（快速記帳）── -->
   <div class="page" id="page-add">
     <div class="card">
       <div class="card-title">新增消費</div>
@@ -482,31 +468,24 @@ textarea{resize:none;line-height:1.5}
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbycX3YdSowaRzf1kawigSqOn9mXCaHn52TxAUlu5DIfC79mR6XFWL7UM1JY0UxFUz_E/exec";
 const STORAGE_KEY='travel_expense_v4';
 const CURR_LIST=[
-  {code:'JPY',flag:'🇯🇵',name:'日圓'},
-  {code:'GBP',flag:'🇬🇧',name:'英鎊'},
-  {code:'EUR',flag:'🇪🇺',name:'歐元'},
-  {code:'KRW',flag:'🇰🇷',name:'韓元'},
-  {code:'THB',flag:'🇹🇭',name:'泰銖'},
-  {code:'VND',flag:'🇻🇳',name:'越南盾'},
-  {code:'PHP',flag:'🇵🇭',name:'披索'},
-  {code:'USD',flag:'🇺🇸',name:'美金'},
+  {code:'JPY',flag:'🇯🇵',name:'日圓'},{code:'GBP',flag:'🇬🇧',name:'英鎊'},
+  {code:'EUR',flag:'🇪🇺',name:'歐元'},{code:'KRW',flag:'🇰🇷',name:'韓元'},
+  {code:'THB',flag:'🇹🇭',name:'泰銖'},{code:'VND',flag:'🇻🇳',name:'越南盾'},
+  {code:'PHP',flag:'🇵🇭',name:'披索'},{code:'USD',flag:'🇺🇸',name:'美金'},
 ];
-
 const NAME_A='三口',NAME_B='七元';
 let nameA=NAME_A,nameB=NAME_B,currencies=[],totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
-let payerTotals={a:0,b:0};
-let entryCount=0,currentTrip='',setupDone=false;
-let parentCurrencies={TWD:0,USD:0};
-let exchangeHistory=[];
+let payerTotals={a:0,b:0},entryCount=0,currentTrip='',setupDone=false;
+let parentCurrencies={TWD:0,USD:0},exchangeHistory=[];
 let lastPay='現金',lastTiming='旅遊中',lastPayer='A 支付',lastSplit='共用';
+let _serverBalances=null,_savingConfig=false;
 
 function saveState(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify({nameA,nameB,currencies,totals,payerTotals,entryCount,currentTrip,setupDone,parentCurrencies,exchangeHistory,lastPay,lastTiming,lastPayer,lastSplit}));}catch(e){}
 }
 function loadState(){
   try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    if(!raw)return false;
+    const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;
     const s=JSON.parse(raw);
     nameA=NAME_A;nameB=NAME_B;
     currencies=s.currencies||[];
@@ -521,12 +500,10 @@ function loadState(){
     return setupDone;
   }catch(e){return false;}
 }
-
 function setSyncStatus(s){
   document.getElementById('sync-dot').className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
   document.getElementById('sync-text').textContent=s==='syncing'?'同步中…':s==='error'?'同步失敗':'已同步';
 }
-
 function goPage(name){
   if(name!=='setup'&&!setupDone){showToast('請先完成初始設定');return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -536,579 +513,295 @@ function goPage(name){
   const isAdd=name==='add';
   document.getElementById('bottom-nav-main').style.display=isAdd?'none':'flex';
   document.getElementById('bottom-nav-submit').style.display=isAdd?'flex':'none';
-  if(name==='currency'){
-    // 先用舊資料立即顯示，背景再同步
-    renderCurrencyPage();
-    fetchBalancesFromSheet().then(()=>renderCurrencyPage());
-  }
+  if(name==='currency'){renderCurrencyPage();fetchBalancesFromSheet().then(()=>renderCurrencyPage());}
   if(name==='add'){initQuickEntry();setTimeout(()=>{document.getElementById('f-amount').focus();},100);}
 }
-
-// ── 幣種格狀按鈕初始化 ──
-function buildCurrGrid(gridId, prefix, suffix){
-  const grid=document.getElementById(gridId);
-  if(!grid)return;
-  grid.innerHTML='';
+function buildCurrGrid(gridId,prefix,suffix){
+  const grid=document.getElementById(gridId);if(!grid)return;grid.innerHTML='';
   CURR_LIST.forEach(c=>{
-    const btn=document.createElement('button');
-    btn.className='cg-btn';btn.type='button';
+    const btn=document.createElement('button');btn.className='cg-btn';btn.type='button';
     btn.innerHTML=`<span class="cflag">${c.flag}</span><span class="ccode">${c.code}</span><span class="cname">${c.name}</span>`;
-    btn.onclick=()=>selCurrGrid(btn,gridId,prefix,suffix,c);
-    grid.appendChild(btn);
+    btn.onclick=()=>selCurrGrid(btn,gridId,prefix,suffix,c);grid.appendChild(btn);
   });
 }
 function selCurrGrid(btn,gridId,prefix,suffix,c){
-  document.querySelectorAll('#'+gridId+' .cg-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  const ar=document.getElementById('ar'+prefix+suffix);
-  const af=document.getElementById('af'+prefix+suffix);
-  const ac=document.getElementById('ac'+prefix+suffix);
-  af.textContent=c.flag;ac.textContent=c.code;
-  ar.classList.add('show');
+  document.querySelectorAll('#'+gridId+' .cg-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const ar=document.getElementById('ar'+prefix+suffix),af=document.getElementById('af'+prefix+suffix),ac=document.getElementById('ac'+prefix+suffix);
+  af.textContent=c.flag;ac.textContent=c.code;ar.classList.add('show');
 }
 function toggleManualCurr(inputId,gridId){
-  const inp=document.getElementById(inputId);
-  const show=inp.style.display==='none';
-  inp.style.display=show?'block':'none';
-  if(show)inp.focus();
+  const inp=document.getElementById(inputId);const show=inp.style.display==='none';
+  inp.style.display=show?'block':'none';if(show)inp.focus();
 }
 function initAllCurrGrids(){
-  ['first','new'].forEach(suffix=>{
-    for(let i=1;i<=3;i++) buildCurrGrid('cg'+i+'-'+suffix,i,'-'+suffix);
-  });
+  ['first','new'].forEach(suffix=>{for(let i=1;i<=3;i++)buildCurrGrid('cg'+i+'-'+suffix,i,'-'+suffix);});
 }
-
 function getCurrFromSlot(i,suffix){
-  const grid=document.getElementById('cg'+i+'-'+suffix);
-  if(!grid)return null;
+  const grid=document.getElementById('cg'+i+'-'+suffix);if(!grid)return null;
   const on=grid.querySelector('.cg-btn.on');
-  if(on){
-    const code=on.querySelector('.ccode').textContent;
-    const flag=on.querySelector('.cflag').textContent;
-    const init=parseFloat(document.getElementById('ai'+i+'-'+suffix).value)||0;
-    return{code,flag,init,remaining:init};
-  }
+  if(on){const code=on.querySelector('.ccode').textContent,flag=on.querySelector('.cflag').textContent,init=parseFloat(document.getElementById('ai'+i+'-'+suffix).value)||0;return{code,flag,init,remaining:init};}
   const manual=document.getElementById('m'+i+'-'+suffix);
-  if(manual&&manual.style.display!=='none'&&manual.value.trim()){
-    const code=manual.value.trim().toUpperCase();
-    const init=parseFloat(document.getElementById('ai'+i+'-'+suffix).value)||0;
-    return{code,flag:'',init,remaining:init};
-  }
+  if(manual&&manual.style.display!=='none'&&manual.value.trim()){const code=manual.value.trim().toUpperCase(),init=parseFloat(document.getElementById('ai'+i+'-'+suffix).value)||0;return{code,flag:'',init,remaining:init};}
   return null;
 }
-
-// ── 設定 ──
 function confirmFirstSetup(){
   const trip=document.getElementById('trip-name-first').value.trim();
   if(!trip){showToast('請輸入旅行名稱');return;}
-  const currs=[];
-  for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'first');if(c)currs.push(c);}
+  const currs=[];for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'first');if(c)currs.push(c);}
   if(!currs.length){showToast('請至少選擇一種當地幣');return;}
   const invalid=currs.filter(c=>c.code==='TWD'||c.code==='USD');
-  if(invalid.length){
-    if(!confirm(invalid.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？')){return;}
-  }
+  if(invalid.length){if(!confirm(invalid.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？'))return;}
   nameA=NAME_A;nameB=NAME_B;currentTrip=trip;
   currencies=currs.map(c=>({...c,remaining:c.init||0}));
-  // 清除舊版本 localStorage 殘留
   try{localStorage.removeItem('travel_expense_v1');localStorage.removeItem('travel_expense_v2');localStorage.removeItem('travel_expense_v3');}catch(e){}
   totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
   payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
   parentCurrencies={TWD:parseFloat(document.getElementById('init-twd').value)||0,USD:parseFloat(document.getElementById('init-usd').value)||0};
   applySetup(true);
 }
-
 function startNewTrip(){
   const trip=document.getElementById('new-trip-name').value.trim();
   if(!trip){showToast('請輸入新旅行名稱');return;}
-  const currs=[];
-  for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'new');if(c)currs.push(c);}
+  const currs=[];for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'new');if(c)currs.push(c);}
   if(!currs.length){showToast('請至少選擇一種當地幣');return;}
   const invalidNew=currs.filter(c=>c.code==='TWD'||c.code==='USD');
-  if(invalidNew.length){
-    if(!confirm(invalidNew.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？')){return;}
-  }
-  currentTrip=trip;
-  currencies=currs.map(c=>({...c,remaining:c.init||0}));
+  if(invalidNew.length){if(!confirm(invalidNew.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？'))return;}
+  currentTrip=trip;currencies=currs.map(c=>({...c,remaining:c.init||0}));
   totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
   payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
   parentCurrencies={TWD:parseFloat(document.getElementById('new-init-twd').value)||0,USD:parseFloat(document.getElementById('new-init-usd').value)||0};
-  // 清除舊版本的 localStorage 殘留
   try{localStorage.removeItem('travel_expense_v1');localStorage.removeItem('travel_expense_v2');localStorage.removeItem('travel_expense_v3');}catch(e){}
-  applySetup(true);
-  showToast('✓ 新旅行「'+trip+'」已開始');
+  applySetup(true);showToast('✓ 新旅行「'+trip+'」已開始');
 }
-
 function applySetup(saveConfig=false){
   setupDone=true;
+  _serverBalances=null;
   document.getElementById('subtitle').textContent=currentTrip;
-  document.getElementById('label-a').textContent=nameA;
-  document.getElementById('label-b').textContent=nameB;
-  document.getElementById('payer-label-a').textContent=nameA;
-  document.getElementById('payer-label-b').textContent=nameB;
+  document.getElementById('label-a').textContent=nameA;document.getElementById('label-b').textContent=nameB;
+  document.getElementById('payer-label-a').textContent=nameA;document.getElementById('payer-label-b').textContent=nameB;
   document.getElementById('info-trip').textContent=currentTrip;
   document.getElementById('info-names').textContent=nameA+' / '+nameB;
   document.getElementById('info-count').textContent=entryCount+' 筆';
-
-  // 更新幣值 popup
   buildCurrPopup();
-
-  // 換匯換成下拉
-  const exTo=document.getElementById('ex-to-curr');
-  exTo.innerHTML='';
+  const exTo=document.getElementById('ex-to-curr');exTo.innerHTML='';
   currencies.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=(c.flag||'')+' '+c.code;exTo.appendChild(o);});
-
-  // pill 初始化 — 用真名
   document.getElementById('pill-payer-text').textContent=nameA+' 支付';
-  document.getElementById('payer-opt-a').textContent=nameA;
-  document.getElementById('payer-opt-b').textContent=nameB;
+  document.getElementById('payer-opt-a').textContent=nameA;document.getElementById('payer-opt-b').textContent=nameB;
   lastPayer=nameA+' 支付';
   const payerOpts=document.getElementById('popup-payer').querySelectorAll('.qpill-opt');
-  payerOpts[0].classList.add('sel');
-  payerOpts[1].classList.remove('sel');
-
+  payerOpts[0].classList.add('sel');payerOpts[1].classList.remove('sel');
   const today=new Date().toISOString().split('T')[0];
-  document.getElementById('f-date').value=today;
-  document.getElementById('ex-date').value=today;
-
-  updateTotalsUI();
-  renderCurrencyPage();
-  saveState();
+  document.getElementById('f-date').value=today;document.getElementById('ex-date').value=today;
+  updateTotalsUI();renderCurrencyPage();saveState();
   if(saveConfig){
+    _savingConfig=true;
     fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({type:'saveConfig',nameA,nameB,trip:currentTrip,
         currencies:currencies.map(c=>({code:c.code,flag:c.flag||'',name:c.name||'',init:c.init||0})),
-        initTWD:parentCurrencies.TWD||0,
-        initUSD:parentCurrencies.USD||0
-      })});
+        initTWD:parentCurrencies.TWD||0,initUSD:parentCurrencies.USD||0
+      })}).finally(()=>{setTimeout(()=>{_savingConfig=false;},2000);});
   }
   document.getElementById('setup-first').style.display='none';
   document.getElementById('setup-existing').style.display='block';
   goPage('summary');
 }
-
-function saveNames(){
-  nameA=NAME_A;nameB=NAME_B;applySetup(true);showToast('✓ 名稱已更新');
-}
-
-// ── 幣值 popup ──
+function saveNames(){nameA=NAME_A;nameB=NAME_B;applySetup(true);showToast('✓ 名稱已更新');}
 function buildCurrPopup(){
-  const popup=document.getElementById('curr-popup');
-  popup.innerHTML='';
-  // 當地幣優先
-  currencies.forEach(c=>{
-    const d=document.createElement('div');
-    d.className='qc-opt';
-    d.innerHTML=(c.flag||'')+' <span>'+c.code+'</span>';
-    d.onclick=(e)=>{e.stopPropagation();selectCurr(c.code,c.flag||'');};
-    popup.appendChild(d);
-  });
-  // TWD 在後
-  const twd=document.createElement('div');
-  twd.className='qc-opt';
-  twd.innerHTML='🇹🇼 <span>TWD 台幣</span>';
-  twd.onclick=(e)=>{e.stopPropagation();selectCurr('TWD','🇹🇼');};
-  popup.appendChild(twd);
-  // 預設選第一個當地幣
-  if(currencies.length) selectCurr(currencies[0].code,currencies[0].flag||'',false);
+  const popup=document.getElementById('curr-popup');popup.innerHTML='';
+  currencies.forEach(c=>{const d=document.createElement('div');d.className='qc-opt';d.innerHTML=(c.flag||'')+' <span>'+c.code+'</span>';d.onclick=(e)=>{e.stopPropagation();selectCurr(c.code,c.flag||'');};popup.appendChild(d);});
+  const twd=document.createElement('div');twd.className='qc-opt';twd.innerHTML='🇹🇼 <span>TWD 台幣</span>';twd.onclick=(e)=>{e.stopPropagation();selectCurr('TWD','🇹🇼');};popup.appendChild(twd);
+  if(currencies.length)selectCurr(currencies[0].code,currencies[0].flag||'',false);
 }
-
 function toggleCurrPill(){
-  const pill=document.getElementById('curr-pill');
-  const popup=document.getElementById('curr-popup');
-  const showing=popup.classList.contains('show');
-  closeAllPopups();
-  if(!showing){popup.classList.add('show');pill.classList.add('open');}
+  const pill=document.getElementById('curr-pill'),popup=document.getElementById('curr-popup'),showing=popup.classList.contains('show');
+  closeAllPopups();if(!showing){popup.classList.add('show');pill.classList.add('open');}
 }
-
 function selectCurr(code,flag,closePopup=true){
   document.getElementById('curr-pill-text').textContent=code;
-  document.querySelectorAll('#curr-popup .qc-opt').forEach(o=>{
-    o.classList.toggle('sel',o.querySelector('span').textContent.startsWith(code));
-  });
-  if(closePopup){
-    document.getElementById('curr-popup').classList.remove('show');
-    document.getElementById('curr-pill').classList.remove('open');
-  }
+  document.querySelectorAll('#curr-popup .qc-opt').forEach(o=>{o.classList.toggle('sel',o.querySelector('span').textContent.startsWith(code));});
+  if(closePopup){document.getElementById('curr-popup').classList.remove('show');document.getElementById('curr-pill').classList.remove('open');}
   const isTWD=code==='TWD';
   document.getElementById('rate-section').style.display=isTWD?'none':'block';
   document.getElementById('curr-unit').textContent=code;
-  if(!isTWD)fetchRate(code);
-  calcTWD();
+  if(!isTWD)fetchRate(code);calcTWD();
 }
-
-// ── 快速記帳 ──
 function initQuickEntry(){
   document.getElementById('pill-pay-text').textContent=lastPay;
   document.getElementById('pill-timing-text').textContent=lastTiming;
   document.getElementById('pill-payer-text').textContent=lastPayer;
   document.getElementById('pill-split-text').textContent=lastSplit;
   updateDatePill();
-  // 重置 popup selected 狀態
-  setPopupSel('popup-pay',lastPay);
-  setPopupSel('popup-timing',lastTiming);
+  setPopupSel('popup-pay',lastPay);setPopupSel('popup-timing',lastTiming);
   const payerShort=lastPayer.replace(' 支付','');
-  document.querySelectorAll('#popup-payer .qpill-opt').forEach(o=>{
-    o.classList.toggle('sel',o.textContent===payerShort);
-  });
+  document.querySelectorAll('#popup-payer .qpill-opt').forEach(o=>{o.classList.toggle('sel',o.textContent===payerShort);});
   setPopupSel('popup-split',lastSplit);
 }
-function selCat(btn){
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-}
+function selCat(btn){document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
 function selPayerPill(opt,e){
-  e.stopPropagation();
-  const name=opt.textContent;
+  e.stopPropagation();const name=opt.textContent;
   document.getElementById('pill-payer-text').textContent=name+' 支付';
-  document.querySelectorAll('#popup-payer .qpill-opt').forEach(o=>o.classList.remove('sel'));
-  opt.classList.add('sel');
-  document.getElementById('popup-payer').classList.remove('show');
-  document.getElementById('pill-payer').classList.remove('open');
+  document.querySelectorAll('#popup-payer .qpill-opt').forEach(o=>o.classList.remove('sel'));opt.classList.add('sel');
+  document.getElementById('popup-payer').classList.remove('show');document.getElementById('pill-payer').classList.remove('open');
 }
-function setPopupSel(popupId,val){
-  document.querySelectorAll('#'+popupId+' .qpill-opt').forEach(o=>{
-    o.classList.toggle('sel',o.textContent===val);
-  });
-}
+function setPopupSel(popupId,val){document.querySelectorAll('#'+popupId+' .qpill-opt').forEach(o=>{o.classList.toggle('sel',o.textContent===val);});}
 function togglePill(pillId,popupId){
-  const pill=document.getElementById(pillId);
-  const popup=document.getElementById(popupId);
-  const showing=popup.classList.contains('show');
-  closeAllPopups();
-  if(!showing){popup.classList.add('show');pill.classList.add('open');}
+  const pill=document.getElementById(pillId),popup=document.getElementById(popupId),showing=popup.classList.contains('show');
+  closeAllPopups();if(!showing){popup.classList.add('show');pill.classList.add('open');}
 }
 function selPill(pillId,popupId,val,e){
-  e.stopPropagation();
-  document.getElementById(pillId).querySelector('span').textContent=val;
-  document.querySelectorAll('#'+popupId+' .qpill-opt').forEach(o=>o.classList.remove('sel'));
-  e.currentTarget.classList.add('sel');
-  document.getElementById(popupId).classList.remove('show');
-  document.getElementById(pillId).classList.remove('open');
+  e.stopPropagation();document.getElementById(pillId).querySelector('span').textContent=val;
+  document.querySelectorAll('#'+popupId+' .qpill-opt').forEach(o=>o.classList.remove('sel'));e.currentTarget.classList.add('sel');
+  document.getElementById(popupId).classList.remove('show');document.getElementById(pillId).classList.remove('open');
 }
 function updateDatePill(){
   const val=document.getElementById('f-date').value;
   if(!val){document.getElementById('pill-date-text').textContent='今天';return;}
-  const d=new Date(val+'T00:00:00');
-  document.getElementById('pill-date-text').textContent=(d.getMonth()+1)+'/'+(d.getDate());
+  const d=new Date(val+'T00:00:00');document.getElementById('pill-date-text').textContent=(d.getMonth()+1)+'/'+(d.getDate());
 }
 function closeAllPopups(){
-  document.querySelectorAll('.qpill-popup.show,.qc-popup.show').forEach(p=>{
-    p.classList.remove('show');
-    const parent=p.closest('.qpill,.quick-curr-pill');
-    if(parent)parent.classList.remove('open');
-  });
+  document.querySelectorAll('.qpill-popup.show,.qc-popup.show').forEach(p=>{p.classList.remove('show');const parent=p.closest('.qpill,.quick-curr-pill');if(parent)parent.classList.remove('open');});
 }
-document.addEventListener('click',function(e){
-  if(!e.target.closest('.qpill')&&!e.target.closest('.quick-curr-pill')) closeAllPopups();
-});
-
-// ── 匯率（含快取，當天同幣種不重複抓）──
-const _rateCache={};  // { 'JPY': { rate: 0.22, date: '2025-05-01' } }
-
+document.addEventListener('click',function(e){if(!e.target.closest('.qpill')&&!e.target.closest('.quick-curr-pill'))closeAllPopups();});
+const _rateCache={};
 async function fetchRate(curr){
-  const statusEl=document.getElementById('rate-status');
-  const rateEl=document.getElementById('f-rate');
-  const today=new Date().toISOString().split('T')[0];
-  const key=curr.trim().toUpperCase();
-
-  // 先顯示快取值（讓使用者可以立刻看到、輸入）
-  if(_rateCache[key]){
-    rateEl.value=_rateCache[key].rate.toFixed(4);
-    calcTWD();
-    if(_rateCache[key].date===today){
-      statusEl.textContent='即時匯率 ✓';
-      return; // 當天快取，不重抓
-    }
-    statusEl.textContent='更新中…';
-  } else {
-    statusEl.textContent='抓取中…';
-    rateEl.placeholder='抓取中…';
-  }
-
-  // 背景抓新匯率
+  const statusEl=document.getElementById('rate-status'),rateEl=document.getElementById('f-rate');
+  const today=new Date().toISOString().split('T')[0],key=curr.trim().toUpperCase();
+  if(_rateCache[key]){rateEl.value=_rateCache[key].rate.toFixed(4);calcTWD();if(_rateCache[key].date===today){statusEl.textContent='即時匯率 ✓';return;}statusEl.textContent='更新中…';}
+  else{statusEl.textContent='抓取中…';rateEl.placeholder='抓取中…';}
   try{
-    const res=await fetch(`https://open.er-api.com/v6/latest/${key}`);
-    if(!res.ok) throw new Error('err');
-    const data=await res.json();
-    const rate=data.rates&&data.rates.TWD;
-    if(rate){
-      _rateCache[key]={rate,date:today};
-      rateEl.value=rate.toFixed(4);
-      statusEl.textContent='即時匯率 ✓';
-      calcTWD();
-    } else throw new Error('no TWD');
+    const res=await fetch(`https://open.er-api.com/v6/latest/${key}`);if(!res.ok)throw new Error('err');
+    const data=await res.json();const rate=data.rates&&data.rates.TWD;
+    if(rate){_rateCache[key]={rate,date:today};rateEl.value=rate.toFixed(4);statusEl.textContent='即時匯率 ✓';calcTWD();}else throw new Error('no TWD');
   }catch(e){
     try{
-      const res2=await fetch(`https://api.exchangerate-api.com/v4/latest/${key}`);
-      const data2=await res2.json();
-      const rate2=data2.rates&&data2.rates.TWD;
-      if(rate2){
-        _rateCache[key]={rate:rate2,date:today};
-        rateEl.value=rate2.toFixed(4);
-        statusEl.textContent='即時匯率 ✓';
-        calcTWD();
-      } else {
-        if(!_rateCache[key]) statusEl.textContent='請手動填入';
-        else statusEl.textContent='使用上次匯率';
-      }
-    }catch(e2){
-      if(!_rateCache[key]){ statusEl.textContent='請手動填入'; rateEl.placeholder='請手動填入'; }
-      else statusEl.textContent='使用上次匯率';
-    }
+      const res2=await fetch(`https://api.exchangerate-api.com/v4/latest/${key}`);const data2=await res2.json();const rate2=data2.rates&&data2.rates.TWD;
+      if(rate2){_rateCache[key]={rate:rate2,date:today};rateEl.value=rate2.toFixed(4);statusEl.textContent='即時匯率 ✓';calcTWD();}
+      else{if(!_rateCache[key])statusEl.textContent='請手動填入';else statusEl.textContent='使用上次匯率';}
+    }catch(e2){if(!_rateCache[key]){statusEl.textContent='請手動填入';rateEl.placeholder='請手動填入';}else statusEl.textContent='使用上次匯率';}
   }
 }
 function calcTWD(){
-  const curr=document.getElementById('curr-pill-text').textContent;
-  const amount=parseFloat(document.getElementById('f-amount').value)||0;
-  if(curr==='TWD'){
-    document.getElementById('twd-preview')&&(document.getElementById('twd-preview').textContent='$'+Math.round(amount).toLocaleString());
-    return;
-  }
-  const rate=parseFloat(document.getElementById('f-rate').value)||0;
-  const twd=amount&&rate?Math.round(amount*rate):0;
-  const el=document.getElementById('twd-preview');
-  if(el)el.textContent='$'+twd.toLocaleString();
+  const curr=document.getElementById('curr-pill-text').textContent,amount=parseFloat(document.getElementById('f-amount').value)||0;
+  if(curr==='TWD'){document.getElementById('twd-preview')&&(document.getElementById('twd-preview').textContent='$'+Math.round(amount).toLocaleString());return;}
+  const rate=parseFloat(document.getElementById('f-rate').value)||0,twd=amount&&rate?Math.round(amount*rate):0;
+  const el=document.getElementById('twd-preview');if(el)el.textContent='$'+twd.toLocaleString();
 }
-
-// ── 外幣換匯頁（資料全部來自 Sheet，兩人保證同步）──
-let _serverBalances = null;
-
 async function fetchBalancesFromSheet(){
-  if(!currentTrip) return;
+  if(!currentTrip||_savingConfig)return;
   try{
     setSyncStatus('syncing');
-    const res = await fetch(SCRIPT_URL+'?action=getBalances&trip='+encodeURIComponent(currentTrip));
-    const data = await res.json();
-    _serverBalances = data;
-    // 同步回本地，讓 submitEntry 現金扣款有正確基礎
-    if(data.localBalances){
-      currencies.forEach(c=>{
-        const b = data.localBalances[c.code];
-        if(b !== undefined) c.remaining = b.remaining;
-      });
-    }
-    if(data.initTWD !== undefined) parentCurrencies.TWD = data.initTWD;
-    if(data.initUSD !== undefined) parentCurrencies.USD = data.initUSD;
-    if(data.history) exchangeHistory = data.history;
-    saveState();
-    setSyncStatus('ok');
-  }catch(e){ setSyncStatus('error'); }
+    const res=await fetch(SCRIPT_URL+'?action=getBalances&trip='+encodeURIComponent(currentTrip));
+    const data=await res.json();_serverBalances=data;
+    if(data.localBalances){currencies.forEach(c=>{const b=data.localBalances[c.code];if(b!==undefined)c.remaining=b.remaining;});}
+    if(data.initTWD!==undefined)parentCurrencies.TWD=data.initTWD;
+    if(data.initUSD!==undefined)parentCurrencies.USD=data.initUSD;
+    if(data.history)exchangeHistory=data.history;
+    saveState();setSyncStatus('ok');
+  }catch(e){setSyncStatus('error');}
 }
-
 function renderCurrencyPage(){
-  const b = _serverBalances;
-  // 當地幣
-  const lList = document.getElementById('local-currency-list');
-  lList.innerHTML = '';
-  if(!currencies.length){ lList.innerHTML='<p style="font-size:14px;color:var(--text2)">完成設定後顯示</p>'; return; }
+  const b=_serverBalances;
+  const lList=document.getElementById('local-currency-list');lList.innerHTML='';
+  if(!currencies.length){lList.innerHTML='<p style="font-size:14px;color:var(--text2)">完成設定後顯示</p>';return;}
   currencies.forEach(c=>{
-    let remaining = c.remaining, cashSpent = 0, received = 0;
-    if(b && b.localBalances && b.localBalances[c.code]){
-      remaining = b.localBalances[c.code].remaining;
-      cashSpent = b.localBalances[c.code].cashSpent;
-      received  = b.localBalances[c.code].received;
-    }
-    const row = document.createElement('div'); row.className='curr-item-row';
-    row.innerHTML=`
-      <span class="ci-flag">${c.flag||'💵'}</span>
-      <div class="ci-info">
-        <div class="ci-code">${c.code}</div>
-        <div class="ci-sub">換匯取得 ${Number(received).toLocaleString()} · 現金消費 ${Number(cashSpent).toLocaleString()} ${c.code}</div>
-      </div>
-      <div class="ci-right">
-        <div class="ci-remain" id="remain-val-${c.code}">${Number(remaining).toLocaleString()}</div>
-        <div class="ci-label">剩餘</div>
-      </div>`;
+    let remaining=c.remaining,cashSpent=0,received=0;
+    if(b&&b.localBalances&&b.localBalances[c.code]){remaining=b.localBalances[c.code].remaining;cashSpent=b.localBalances[c.code].cashSpent;received=b.localBalances[c.code].received;}
+    const row=document.createElement('div');row.className='curr-item-row';
+    row.innerHTML=`<span class="ci-flag">${c.flag||'💵'}</span><div class="ci-info"><div class="ci-code">${c.code}</div><div class="ci-sub">換匯取得 ${Number(received).toLocaleString()} · 現金消費 ${Number(cashSpent).toLocaleString()} ${c.code}</div></div><div class="ci-right"><div class="ci-remain" id="remain-val-${c.code}">${Number(remaining).toLocaleString()}</div><div class="ci-label">剩餘</div></div>`;
     lList.appendChild(row);
-    const manRow = document.createElement('div'); manRow.className='manual-row';
+    const manRow=document.createElement('div');manRow.className='manual-row';
     manRow.innerHTML=`<input type="number" id="remain-input-${c.code}" placeholder="手動修正餘額" min="0"><button class="btn-sm" onclick="setRemain('${c.code}')">更新</button>`;
     lList.appendChild(manRow);
   });
-  // 母幣
-  const pList = document.getElementById('parent-currency-list');
-  pList.innerHTML = '';
+  const pList=document.getElementById('parent-currency-list');pList.innerHTML='';
   [['TWD','🇹🇼','台幣'],['USD','🇺🇸','美金']].forEach(([code,flag,name])=>{
-    let initAmt = parentCurrencies[code]||0, spent = getParentSpent(code), cashSp = 0;
-    if(b){
-      if(code==='TWD'){ initAmt=b.initTWD||0; spent=b.parentSpentTWD||0; cashSp=b.twdCashSpent||0; }
-      if(code==='USD'){ initAmt=b.initUSD||0; spent=b.parentSpentUSD||0; cashSp=b.usdCashSpent||0; }
-    }
-    const remain = Math.max(0, initAmt - spent - cashSp);
-    const row = document.createElement('div'); row.className='curr-item-row';
-    row.innerHTML=`
-      <span class="ci-flag">${flag}</span>
-      <div class="ci-info">
-        <div class="ci-code">${name} ${code}</div>
-        <div class="ci-sub">帶出 ${Number(initAmt).toLocaleString()} · 已換出 ${Number(spent).toLocaleString()}</div>
-      </div>
-      <div class="ci-right">
-        <div class="ci-remain">${Number(remain).toLocaleString()}</div>
-        <div class="ci-label">剩餘</div>
-      </div>`;
+    let initAmt=parentCurrencies[code]||0,spent=getParentSpent(code),cashSp=0;
+    if(b){if(code==='TWD'){initAmt=b.initTWD||0;spent=b.parentSpentTWD||0;cashSp=b.twdCashSpent||0;}if(code==='USD'){initAmt=b.initUSD||0;spent=b.parentSpentUSD||0;cashSp=b.usdCashSpent||0;}}
+    const remain=Math.max(0,initAmt-spent-cashSp);
+    const row=document.createElement('div');row.className='curr-item-row';
+    row.innerHTML=`<span class="ci-flag">${flag}</span><div class="ci-info"><div class="ci-code">${name} ${code}</div><div class="ci-sub">帶出 ${Number(initAmt).toLocaleString()} · 已換出 ${Number(spent).toLocaleString()}</div></div><div class="ci-right"><div class="ci-remain">${Number(remain).toLocaleString()}</div><div class="ci-label">剩餘</div></div>`;
     pList.appendChild(row);
-    const manRow = document.createElement('div'); manRow.className='manual-row';
+    const manRow=document.createElement('div');manRow.className='manual-row';
     manRow.innerHTML=`<input type="number" id="parent-input-${code}" placeholder="修正帶出金額" min="0"><button class="btn-sm" onclick="setParent('${code}')">更新</button>`;
     pList.appendChild(manRow);
   });
-  // 換匯紀錄
-  const history = (b && b.history) ? b.history : exchangeHistory;
-  const histCard = document.getElementById('exchange-history-card');
-  const histList = document.getElementById('exchange-history-list');
+  const history=(b&&b.history)?b.history:exchangeHistory;
+  const histCard=document.getElementById('exchange-history-card'),histList=document.getElementById('exchange-history-list');
   if(history.length){
-    histCard.style.display='block'; histList.innerHTML='';
+    histCard.style.display='block';histList.innerHTML='';
     history.slice().reverse().forEach(h=>{
-      const row = document.createElement('div'); row.className='hist-row';
-      const d = new Date(h.date+'T00:00:00');
-      const dateStr = (d.getMonth()+1)+'/'+(d.getDate());
+      const row=document.createElement('div');row.className='hist-row';
+      const d=new Date(h.date+'T00:00:00'),dateStr=(d.getMonth()+1)+'/'+(d.getDate());
       row.innerHTML=`<span class="hist-date">${dateStr}</span><span class="hist-from">${h.fromCurr} ${Number(h.fromAmount).toLocaleString()}</span><span class="hist-arr">→</span><span class="hist-to">${h.toCurr} ${Number(h.toAmount).toLocaleString()}</span><span class="hist-note">${h.note||''}</span>`;
       histList.appendChild(row);
     });
-  } else { histCard.style.display='none'; }
+  }else{histCard.style.display='none';}
 }
-
-function getCashSpent(code){
-  const cur=currencies.find(c=>c.code===code);
-  if(!cur) return 0;
-  const received=exchangeHistory.filter(h=>h.toCurr===code).reduce((s,h)=>s+Number(h.toAmount),0);
-  return Math.max(0,(cur.init||0)+received-cur.remaining);
-}
-function getParentSpent(code){
-  return exchangeHistory.filter(h=>h.fromCurr===code).reduce((s,h)=>s+Number(h.fromAmount),0);
-}
-
+function getCashSpent(code){const cur=currencies.find(c=>c.code===code);if(!cur)return 0;const received=exchangeHistory.filter(h=>h.toCurr===code).reduce((s,h)=>s+Number(h.toAmount),0);return Math.max(0,(cur.init||0)+received-cur.remaining);}
+function getParentSpent(code){return exchangeHistory.filter(h=>h.fromCurr===code).reduce((s,h)=>s+Number(h.fromAmount),0);}
 function setParent(code){
-  const val=parseFloat(document.getElementById('parent-input-'+code).value);
-  if(isNaN(val)){showToast('請輸入有效金額');return;}
-  parentCurrencies[code]=val;
-  document.getElementById('parent-input-'+code).value='';
-  saveState();renderCurrencyPage();
-  showToast(code+' 帶出金額已更新為 '+val.toLocaleString());
+  const val=parseFloat(document.getElementById('parent-input-'+code).value);if(isNaN(val)){showToast('請輸入有效金額');return;}
+  parentCurrencies[code]=val;document.getElementById('parent-input-'+code).value='';saveState();renderCurrencyPage();showToast(code+' 帶出金額已更新為 '+val.toLocaleString());
 }
 function setRemain(code){
-  const val=parseFloat(document.getElementById('remain-input-'+code).value);
-  if(isNaN(val)){showToast('請輸入有效金額');return;}
-  const cur=currencies.find(c=>c.code===code);
-  if(cur)cur.remaining=val;
-  const el=document.getElementById('remain-val-'+code);
-  if(el)el.textContent=val.toLocaleString();
-  document.getElementById('remain-input-'+code).value='';
-  saveState();showToast(code+' 餘額已修正');
+  const val=parseFloat(document.getElementById('remain-input-'+code).value);if(isNaN(val)){showToast('請輸入有效金額');return;}
+  const cur=currencies.find(c=>c.code===code);if(cur)cur.remaining=val;
+  const el=document.getElementById('remain-val-'+code);if(el)el.textContent=val.toLocaleString();
+  document.getElementById('remain-input-'+code).value='';saveState();showToast(code+' 餘額已修正');
 }
-
-// ── 換匯送出 ──
 async function submitExchange(){
-  const date=document.getElementById('ex-date').value;
-  const fromCurr=document.getElementById('ex-from-curr').value;
-  const fromAmt=parseFloat(document.getElementById('ex-from-amt').value);
-  const toCurr=document.getElementById('ex-to-curr').value;
-  const toAmt=parseFloat(document.getElementById('ex-to-amt').value);
-  const note=document.getElementById('ex-note').value.trim();
+  const date=document.getElementById('ex-date').value,fromCurr=document.getElementById('ex-from-curr').value;
+  const fromAmt=parseFloat(document.getElementById('ex-from-amt').value),toCurr=document.getElementById('ex-to-curr').value;
+  const toAmt=parseFloat(document.getElementById('ex-to-amt').value),note=document.getElementById('ex-note').value.trim();
   if(!date||isNaN(fromAmt)||!fromAmt||isNaN(toAmt)||!toAmt){showToast('請填寫完整換匯資料');return;}
-  // 加當地幣（母幣不直接扣，由 getParentSpent 從換匯歷史計算剩餘）
-  const cur=currencies.find(c=>c.code===toCurr);
-  if(cur)cur.remaining+=toAmt;
-  // 記錄歷史
+  const cur=currencies.find(c=>c.code===toCurr);if(cur)cur.remaining+=toAmt;
   exchangeHistory.push({date,fromCurr,fromAmount:fromAmt,toCurr,toAmount:toAmt,note});
   saveState();renderCurrencyPage();
-  document.getElementById('ex-from-amt').value='';
-  document.getElementById('ex-to-amt').value='';
-  document.getElementById('ex-note').value='';
-  const btn=document.getElementById('exchange-btn');
-  btn.disabled=true;btn.textContent='同步中…';setSyncStatus('syncing');
+  document.getElementById('ex-from-amt').value='';document.getElementById('ex-to-amt').value='';document.getElementById('ex-note').value='';
+  const btn=document.getElementById('exchange-btn');btn.disabled=true;btn.textContent='同步中…';setSyncStatus('syncing');
   try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:'exchange',trip:currentTrip,date,fromCurr,fromAmount:fromAmt,toCurr,toAmount:toAmt,note})});
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'exchange',trip:currentTrip,date,fromCurr,fromAmount:fromAmt,toCurr,toAmount:toAmt,note})});
     setSyncStatus('ok');showToast('✓ '+fromAmt.toLocaleString()+' '+fromCurr+' → '+toAmt.toLocaleString()+' '+toCurr);
-    // 靜默更新換匯快取，下次進換匯頁不用等
     fetchBalancesFromSheet().then(()=>renderCurrencyPage());
   }catch(e){setSyncStatus('error');showToast('換匯已記錄，但同步失敗');}
   finally{btn.disabled=false;btn.textContent='記錄換匯 ✓';}
 }
-
-// ── 消費送出 ──
 async function submitEntry(){
-  const curr=document.getElementById('curr-pill-text').textContent;
-  const amount=parseFloat(document.getElementById('f-amount').value);
+  const curr=document.getElementById('curr-pill-text').textContent,amount=parseFloat(document.getElementById('f-amount').value);
   const catBtn=document.querySelector('.cat-btn.on');
-  if(isNaN(amount)||amount<=0){showToast('請輸入金額');return;}
-  if(!catBtn){showToast('請選擇類別');return;}
-
-  const cat=catBtn.dataset.val;
-  const item=document.getElementById('f-item').value.trim();
+  if(isNaN(amount)||amount<=0){showToast('請輸入金額');return;}if(!catBtn){showToast('請選擇類別');return;}
+  const cat=catBtn.dataset.val,item=document.getElementById('f-item').value.trim();
   const date=document.getElementById('f-date').value||new Date().toISOString().split('T')[0];
-  const payMethod=document.getElementById('pill-pay-text').textContent;
-  const timing=document.getElementById('pill-timing-text').textContent;
-  const payerText=document.getElementById('pill-payer-text').textContent;
-  const split=document.getElementById('pill-split-text').textContent;
-
+  const payMethod=document.getElementById('pill-pay-text').textContent,timing=document.getElementById('pill-timing-text').textContent;
+  const payerText=document.getElementById('pill-payer-text').textContent,split=document.getElementById('pill-split-text').textContent;
   const payer=payerText.replace(' 支付','');
-  let twd=0;
-  if(curr==='TWD') twd=amount;
-  else twd=Math.round(amount*(parseFloat(document.getElementById('f-rate').value)||0));
+  let twd=0;if(curr==='TWD')twd=amount;else twd=Math.round(amount*(parseFloat(document.getElementById('f-rate').value)||0));
   if(!twd&&curr!=='TWD'){showToast('請確認匯率');return;}
   const rate=curr==='TWD'?'1':(document.getElementById('f-rate').value||'1');
-
-  // 扣當地幣現金
   if(payMethod==='現金'){
-    if(curr==='TWD'){
-      // 台幣現金消費 → 扣母幣台幣
-      parentCurrencies['TWD']=Math.max(0,(parentCurrencies['TWD']||0)-amount);
-    } else if(curr==='USD'&&parentCurrencies['USD']!==undefined&&currencies.findIndex(x=>x.code==='USD')<0){
-      // USD 作為母幣（非當地幣）現金消費 → 扣母幣美金
-      parentCurrencies['USD']=Math.max(0,(parentCurrencies['USD']||0)-amount);
-    } else {
-      // 外幣現金消費 → 扣當地幣餘額
-      const c=currencies.find(x=>x.code===curr);
-      if(c){c.remaining=Math.max(0,c.remaining-amount);const el=document.getElementById('remain-val-'+curr);if(el)el.textContent=c.remaining.toLocaleString();}
-    }
+    if(curr==='TWD'){parentCurrencies['TWD']=Math.max(0,(parentCurrencies['TWD']||0)-amount);}
+    else if(curr==='USD'&&parentCurrencies['USD']!==undefined&&currencies.findIndex(x=>x.code==='USD')<0){parentCurrencies['USD']=Math.max(0,(parentCurrencies['USD']||0)-amount);}
+    else{const c=currencies.find(x=>x.code===curr);if(c){c.remaining=Math.max(0,c.remaining-amount);const el=document.getElementById('remain-val-'+curr);if(el)el.textContent=c.remaining.toLocaleString();}}
   }
-
-  // 統計
   const isBefore=timing==='出發前';
   if(split==='共用'){totals.ab+=twd;if(isBefore)totals.abBefore+=twd;else totals.abDuring+=twd;}
   else if(split==='三口'){totals.a+=twd;if(isBefore)totals.aBefore+=twd;else totals.aDuring+=twd;}
   else{totals.b+=twd;if(isBefore)totals.bBefore+=twd;else totals.bDuring+=twd;}
   if(payer===nameA)payerTotals.a+=twd;else if(payer===nameB)payerTotals.b+=twd;
-  entryCount++;
-  updateTotalsUI();
-  document.getElementById('info-count').textContent=entryCount+' 筆';
-
-  // 記住上次選擇
-  lastPay=payMethod;lastTiming=timing;lastPayer=payerText;lastSplit=split;
-  saveState();
-
-  // 清空金額和項目
-  document.getElementById('f-amount').value='';
-  document.getElementById('f-item').value='';
+  entryCount++;updateTotalsUI();document.getElementById('info-count').textContent=entryCount+' 筆';
+  lastPay=payMethod;lastTiming=timing;lastPayer=payerText;lastSplit=split;saveState();
+  document.getElementById('f-amount').value='';document.getElementById('f-item').value='';
   document.getElementById('twd-preview')&&(document.getElementById('twd-preview').textContent='$0');
-
-  // 按鈕變綠
-  const btn=document.getElementById('submit-btn');
-  btn.disabled=true;btn.textContent='✓ 已送出！';btn.classList.add('success');
-  setSyncStatus('syncing');
-  document.getElementById('submit-error').classList.remove('show');
-
+  const btn=document.getElementById('submit-btn');btn.disabled=true;btn.textContent='✓ 已送出！';btn.classList.add('success');
+  setSyncStatus('syncing');document.getElementById('submit-error').classList.remove('show');
   const payload={type:'expense',trip:currentTrip,date,category:cat,item,currency:curr,amount,rate,twd,payMethod,payer,split,timing,note:''};
-
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    setSyncStatus('ok');
-    window._lastFailedPayload=null;
-    // 現金消費後靜默更新換匯快取，下次進換匯頁不用等
-    if(payMethod==='現金') fetchBalancesFromSheet();
-  }catch(e){
-    setSyncStatus('error');
-    window._lastFailedPayload=payload;
-    document.getElementById('submit-error').classList.add('show');
-  }
-  setTimeout(()=>{
-    btn.disabled=false;btn.textContent='送出記帳 ✓';btn.classList.remove('success');
-    document.getElementById('f-amount').focus();
-  },1500);
+    setSyncStatus('ok');window._lastFailedPayload=null;
+    if(payMethod==='現金')fetchBalancesFromSheet();
+  }catch(e){setSyncStatus('error');window._lastFailedPayload=payload;document.getElementById('submit-error').classList.add('show');}
+  setTimeout(()=>{btn.disabled=false;btn.textContent='送出記帳 ✓';btn.classList.remove('success');document.getElementById('f-amount').focus();},1500);
 }
-
-// ── 統計 UI ──
 function updateTotalsUI(){
   document.getElementById('total-a').textContent='$'+totals.a.toLocaleString();
   document.getElementById('total-b').textContent='$'+totals.b.toLocaleString();
@@ -1117,33 +810,18 @@ function updateTotalsUI(){
   document.getElementById('ab-during').textContent='$'+totals.abDuring.toLocaleString();
   document.getElementById('payer-total-a').textContent='$'+payerTotals.a.toLocaleString();
   document.getElementById('payer-total-b').textContent='$'+payerTotals.b.toLocaleString();
-  const sc=document.getElementById('summary-count');
-  if(sc)sc.textContent=entryCount+' 筆';
+  const sc=document.getElementById('summary-count');if(sc)sc.textContent=entryCount+' 筆';
 }
-
-// ── 同步 ──
 async function fetchConfigFromSheet(){
-  try{
-    const res=await fetch(SCRIPT_URL+'?action=getConfig');
-    const data=await res.json();
-    if(data.nameA)nameA=data.nameA;
-    if(data.nameB)nameB=data.nameB;
-    if(data.trip)currentTrip=data.trip;
-  }catch(e){}
+  try{const res=await fetch(SCRIPT_URL+'?action=getConfig');const data=await res.json();if(data.nameA)nameA=data.nameA;if(data.nameB)nameB=data.nameB;if(data.trip)currentTrip=data.trip;}catch(e){}
 }
-// ── 換匯歷史同步（已由 fetchBalancesFromSheet 取代，保留供相容）──
-async function fetchExchangeHistoryFromSheet(){ return fetchBalancesFromSheet(); }
-
+async function fetchExchangeHistoryFromSheet(){return fetchBalancesFromSheet();}
 async function fetchTotalsFromSheet(){
   try{
     setSyncStatus('syncing');
     const url=SCRIPT_URL+'?action=getTotals&trip='+encodeURIComponent(currentTrip)+'&nameA='+encodeURIComponent(nameA)+'&nameB='+encodeURIComponent(nameB);
-    const res=await fetch(url);
-    const data=await res.json();
-    if(data.totals){
-      totals=data.totals;
-      ['abBefore','abDuring','aBefore','aDuring','bBefore','bDuring'].forEach(k=>{totals[k]=totals[k]||0;});
-    }
+    const res=await fetch(url);const data=await res.json();
+    if(data.totals){totals=data.totals;['abBefore','abDuring','aBefore','aDuring','bBefore','bDuring'].forEach(k=>{totals[k]=totals[k]||0;});}
     if(data.payerTotals)payerTotals=data.payerTotals;
     if(data.entryCount!==undefined)entryCount=data.entryCount;
     saveState();updateTotalsUI();
@@ -1152,87 +830,42 @@ async function fetchTotalsFromSheet(){
     setSyncStatus('ok');
   }catch(e){setSyncStatus('error');}
 }
-
 function copyInviteLink(){
-  const base=window.location.href.split('?')[0];
-  const link=base+'?trip='+encodeURIComponent(currentTrip);
-  navigator.clipboard.writeText(link).then(()=>{
-    const btn=document.getElementById('invite-btn');
-    btn.textContent='✓ 已複製！';
-    setTimeout(()=>btn.textContent='📋 複製邀請連結',2000);
-  }).catch(()=>{
-    prompt('請手動複製這個連結：',link);
-  });
+  const base=window.location.href.split('?')[0],link=base+'?trip='+encodeURIComponent(currentTrip);
+  navigator.clipboard.writeText(link).then(()=>{const btn=document.getElementById('invite-btn');btn.textContent='✓ 已複製！';setTimeout(()=>btn.textContent='📋 複製邀請連結',2000);}).catch(()=>{prompt('請手動複製這個連結：',link);});
 }
-
 async function loadTripFromConfig(data){
-  nameA=data.nameA||'A';
-  nameB=data.nameB||'B';
-  currentTrip=data.trip||'';
-  try{
-    const res=await fetch(SCRIPT_URL+'?action=getCurrencies&trip='+encodeURIComponent(currentTrip));
-    const d=await res.json();
-    if(d.currencies&&d.currencies.length){
-      currencies=d.currencies.map(c=>({...c,remaining:c.init||0}));
-    }
-  }catch(e){}
-  parentCurrencies={TWD:0,USD:0};
-  totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
+  nameA=data.nameA||'A';nameB=data.nameB||'B';currentTrip=data.trip||'';
+  try{const res=await fetch(SCRIPT_URL+'?action=getCurrencies&trip='+encodeURIComponent(currentTrip));const d=await res.json();if(d.currencies&&d.currencies.length){currencies=d.currencies.map(c=>({...c,remaining:c.init||0}));}}catch(e){}
+  parentCurrencies={TWD:0,USD:0};totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
   payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
-  if(!currencies.length) currencies=[{code:'JPY',flag:'🇯🇵',name:'日圓',init:0,remaining:0}];
-  applySetup(false);
-  fetchTotalsFromSheet();
-  showToast('✓ 已加入「'+currentTrip+'」');
+  if(!currencies.length)currencies=[{code:'JPY',flag:'🇯🇵',name:'日圓',init:0,remaining:0}];
+  applySetup(false);fetchTotalsFromSheet();showToast('✓ 已加入「'+currentTrip+'」');
 }
-
 async function checkUrlParams(){
-  const params=new URLSearchParams(window.location.search);
-  const tripParam=params.get('trip');
+  const params=new URLSearchParams(window.location.search),tripParam=params.get('trip');
   if(tripParam&&!setupDone){
     showToast('正在載入旅行設定…');
     try{
-      const res=await fetch(SCRIPT_URL+'?action=getConfig');
-      const data=await res.json();
-      if(data.trip===tripParam&&data.nameA&&data.nameB){
-        await loadTripFromConfig(data);
-      } else {
-        showToast('找不到此旅行，請聯絡旅伴確認連結');
-      }
-    }catch(e){
-      showToast('載入失敗，請檢查網路');
-    }
+      const res=await fetch(SCRIPT_URL+'?action=getConfig');const data=await res.json();
+      if(data.trip===tripParam&&data.nameA&&data.nameB){await loadTripFromConfig(data);}
+      else{showToast('找不到此旅行，請聯絡旅伴確認連結');}
+    }catch(e){showToast('載入失敗，請檢查網路');}
   }
 }
-
 async function retryLastSubmit(){
   if(!window._lastFailedPayload){showToast('沒有待重試的資料');return;}
-  const btn=document.getElementById('submit-btn');
   setSyncStatus('syncing');
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(window._lastFailedPayload)});
-    setSyncStatus('ok');
-    document.getElementById('submit-error').classList.remove('show');
-    window._lastFailedPayload=null;
-    showToast('✓ 同步成功');
+    setSyncStatus('ok');document.getElementById('submit-error').classList.remove('show');window._lastFailedPayload=null;showToast('✓ 同步成功');
   }catch(e){setSyncStatus('error');showToast('仍然失敗，請檢查網路');}
 }
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
-}
-
-// ── 初始化 ──
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 window.addEventListener('DOMContentLoaded',async()=>{
   initAllCurrGrids();
-  if(loadState()&&setupDone){
-    await fetchConfigFromSheet();
-    applySetup(false);
-    fetchTotalsFromSheet();
-  } else {
-    await checkUrlParams();
-  }
+  if(loadState()&&setupDone){await fetchConfigFromSheet();applySetup(false);fetchTotalsFromSheet();}
+  else{await checkUrlParams();}
 });
 </script>
 </body>
