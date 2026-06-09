@@ -639,7 +639,7 @@ const S = {
 };
 
 function todayStr(){ return new Date().toISOString().split('T')[0]; }
-function fmtDate(s){ const d=new Date(s); return `${d.getMonth()+1}/${d.getDate()}`; }
+function fmtDate(s){ const d=new Date(s+'T00:00:00'); return `${d.getMonth()+1}/${d.getDate()}`; }
 function fmtMoney(n){ return '$'+Math.round(n).toLocaleString(); }
 function toTWD(amt,cur){ return Math.round(amt*(S.rates[cur]||1)); }
 function gasPost(data){ fetch(GAS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(data)}).catch(()=>{}); }
@@ -651,11 +651,21 @@ function syncStatus(s){
   l.textContent=s==='err'?'同步失敗':s==='ing'?'同步中...':'已同步';
 }
 
-// ── PIN ──
-let pinVal='';
-const isFirst=!localStorage.getItem('howmuch_pin');
-if(isFirst) document.getElementById('pin-sub-t').textContent='設定四位數 PIN 碼';
+// ── PIN ── 只有第一次進入需要設定，之後直接跳過
+const pinSet=localStorage.getItem('howmuch_pin');
+if(pinSet){
+  // 已設定過 PIN，直接進入
+  document.getElementById('pin-overlay').classList.add('hidden');
+  // initApp 在 DOMContentLoaded 後執行
+  document.addEventListener('DOMContentLoaded',()=>initApp());
+  // 如果已經 loaded，直接呼叫
+  if(document.readyState!=='loading') initApp();
+} else {
+  // 第一次，顯示設定 PIN 畫面
+  document.getElementById('pin-sub-t').textContent='設定四位數 PIN 碼（之後不再詢問）';
+}
 
+let pinVal='';
 document.querySelectorAll('.pin-pad .pin-key[data-k]').forEach(k=>{
   k.addEventListener('click',()=>pinInput(k.dataset.k));
 });
@@ -667,19 +677,9 @@ function pinInput(n){
   updatePinDots();
   if(pinVal.length===4){
     setTimeout(()=>{
-      const stored=localStorage.getItem('howmuch_pin')||'0000';
-      if(isFirst){
-        localStorage.setItem('howmuch_pin',pinVal);
-        document.getElementById('pin-overlay').classList.add('hidden');
-        initApp();
-      } else if(pinVal===stored){
-        document.getElementById('pin-overlay').classList.add('hidden');
-        initApp();
-      } else {
-        document.getElementById('pin-err').textContent='PIN 碼錯誤，請重試';
-        pinVal='';
-        updatePinDots();
-      }
+      localStorage.setItem('howmuch_pin',pinVal);
+      document.getElementById('pin-overlay').classList.add('hidden');
+      initApp();
     },150);
   }
 }
@@ -687,7 +687,6 @@ function pinDel(){
   if(!pinVal.length) return;
   pinVal=pinVal.slice(0,-1);
   updatePinDots();
-  document.getElementById('pin-err').textContent='';
 }
 function updatePinDots(){
   for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('filled',i<pinVal.length);
@@ -752,7 +751,8 @@ function loadTripData(id){
     document.getElementById('add-trip-name').textContent=trip.name;
     const lc=localStorage.getItem('howmuch_lc_'+id);
     S.addCur=lc||(trip.currencies&&trip.currencies[0])||'TWD';
-    document.getElementById('amt-cur-disp').textContent=S.addCur;
+    const flag=CUR_MAP[S.addCur]?.flag||'💱';
+    document.getElementById('amt-cur-disp').textContent=flag+' '+S.addCur;
     updateConv();
   }
   S.unsubRecords=onSnapshot(
@@ -1015,9 +1015,10 @@ amtInp.addEventListener('input',()=>{
 });
 
 function updateConv(){
+  const v=parseFloat(amtInp.value)||0;
   const conv=document.getElementById('amt-conv');
-  if(!S.addAmt||S.addCur==='TWD'){ conv.textContent=''; return; }
-  conv.textContent='≈ '+fmtMoney(toTWD(parseFloat(S.addAmt)||0,S.addCur))+' TWD';
+  if(!v||S.addCur==='TWD'){ conv.textContent=''; return; }
+  conv.textContent='≈ '+fmtMoney(toTWD(v,S.addCur))+' TWD';
 }
 
 // 類別
@@ -1055,14 +1056,19 @@ document.getElementById('date-confirm-btn').addEventListener('click',()=>{
   document.getElementById('date-overlay').classList.add('hidden');
 });
 
-// 幣種按鈕 — 循環切換這趟旅程的幣種
+// 幣種按鈕 — 循環切換：旅程幣種 + 換匯換入幣種 + TWD
 document.getElementById('amt-cur-btn').addEventListener('click',()=>{
   const trip=S.trips.find(t=>t.id===S.currentTripId);
-  // 旅程幣種清單，預設加上 TWD
-  const curs=trip?.currencies?.length ? trip.currencies : ['TWD'];
-  const idx=curs.indexOf(S.addCur);
-  S.addCur=curs[(idx+1)%curs.length];
-  document.getElementById('amt-cur-disp').textContent=S.addCur;
+  // 旅程設定幣種
+  const tripCurs=trip?.currencies||[];
+  // 換匯換入幣種
+  const exchCurs=S.exchanges.map(e=>e.toCurrency).filter(Boolean);
+  // 合併去重，永遠包含 TWD
+  const allCurs=[...new Set([...tripCurs,...exchCurs,'TWD'])];
+  const idx=allCurs.indexOf(S.addCur);
+  S.addCur=allCurs[(idx+1)%allCurs.length];
+  const flag=CUR_MAP[S.addCur]?.flag||'💱';
+  document.getElementById('amt-cur-disp').textContent=flag+' '+S.addCur;
   updateConv();
 });
 
