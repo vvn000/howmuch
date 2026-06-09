@@ -2,871 +2,1574 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="旅遊記帳">
-<title>旅遊花費記帳</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>howmuch</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* ===== 基礎重置 ===== */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F7FAFA;color:#1A2C2E;overscroll-behavior:none}
+
+/* ===== CSS 變數 ===== */
 :root{
-  --bg:#ffffff;--bg2:#f5f5f4;--bg3:#eeece9;
-  --text:#1a1a18;--text2:#6b6b67;--text3:#9d9d98;
-  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
-  --radius:12px;--radius-sm:8px;
-  --danger:#c0392b;--danger-bg:#fdf0ef;--danger-border:rgba(192,57,43,0.25);
-  --accent:#1d6fa4;--accent-bg:#eef5fb;--accent-border:rgba(29,111,164,0.2);
-  --success:#16a34a;
+  --brand:#18A8C4;
+  --brand-light:#E3F6FB;
+  --brand-mid:#7DD6E8;
+  --brand-dark:#0C6F85;
+  --warm:#FFC585;
+  --warm-light:#FFF3E0;
+  --warm-dark:#A06020;
+  --shared-bg:#EEF2F5;
+  --shared-text:#3A5060;
+  --bg:#F7FAFA;
+  --card:#FFFFFF;
+  --text:#1A2C2E;
+  --text2:#5A7275;
+  --border:rgba(24,168,196,0.18);
+  --border2:rgba(0,0,0,0.07);
+  --success:#1D9E75;
+  --danger:#E24B4A;
+  --edit-blue:#378ADD;
+  --radius-sm:8px;
+  --radius-md:12px;
+  --radius-lg:16px;
+  --radius-xl:20px;
 }
-@media(prefers-color-scheme:dark){:root{
-  --bg:#1c1c1a;--bg2:#2a2a27;--bg3:#333330;
-  --text:#f0ede8;--text2:#9d9d98;--text3:#6b6b67;
-  --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);
-  --danger:#e05a4a;--danger-bg:#2a1a18;--danger-border:rgba(224,90,74,0.3);
-  --accent:#4a9fd4;--accent-bg:#1a2a35;--accent-border:rgba(74,159,212,0.3);
-  --success:#22c55e;
-}}
-html{height:-webkit-fill-available}
-html,body{margin:0;padding:0;background:var(--bg3)}
-body{font-family:-apple-system,'Helvetica Neue',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
-.app{max-width:430px;margin:0 auto;background:var(--bg3);padding-bottom:160px}
-.topbar{background:var(--bg);padding:52px 18px 12px;border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:50}
-.topbar-row{display:flex;align-items:center;justify-content:space-between}
-.topbar h1{font-size:20px;font-weight:600;letter-spacing:-0.3px;color:var(--text)}
-.topbar-sub{font-size:12px;color:var(--text3);margin-top:3px}
-.sync-pill{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);background:var(--bg2);border-radius:20px;padding:4px 9px}
-.sync-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0}
-.sync-dot.syncing{background:#f59e0b}.sync-dot.error{background:#ef4444}
-.page{display:none;padding:14px}
-.page.active{display:block}
-.card{background:var(--bg);border-radius:var(--radius);border:0.5px solid var(--border);padding:15px 16px;margin-bottom:10px}
-.card-danger{border-color:var(--danger-border);background:var(--danger-bg)}
-.card-accent{border-color:var(--accent-border);background:var(--accent-bg)}
-.card-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:13px}
-.card-title-danger{color:var(--danger)}
-.card-title-accent{color:var(--accent)}
-.form-row{margin-bottom:11px}
-.form-row:last-child{margin-bottom:0}
-label.lbl{font-size:13px;color:var(--text2);margin-bottom:5px;display:block}
-input[type=text],input[type=number],input[type=date],select,textarea{
-  width:100%;padding:10px 12px;font-size:16px;
-  border:0.5px solid var(--border2);border-radius:var(--radius-sm);
-  background:var(--bg2);color:var(--text);
-  font-family:inherit;appearance:none;-webkit-appearance:none;
-  outline:none;transition:border-color 0.15s,background 0.15s;
-}
-input:focus,select:focus,textarea:focus{border-color:var(--text);background:var(--bg)}
-textarea{resize:none;line-height:1.5}
-.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.seg{display:flex;border:0.5px solid var(--border2);border-radius:var(--radius-sm);overflow:hidden}
-.seg-btn{flex:1;padding:10px 4px;font-size:13px;font-weight:500;text-align:center;cursor:pointer;background:var(--bg2);color:var(--text2);border:none;border-right:0.5px solid var(--border2);font-family:inherit;transition:all 0.15s}
-.seg-btn:last-child{border-right:none}
-.seg-btn.on{background:var(--text);color:var(--bg)}
-.stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.stat{background:var(--bg2);border-radius:var(--radius-sm);padding:12px 13px}
-.stat-lbl{font-size:11px;color:var(--text3);margin-bottom:3px}
-.stat-val{font-size:24px;font-weight:600;letter-spacing:-0.5px;color:var(--text)}
-.info-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:14px}
-.info-row:last-child{border-bottom:none}
-.info-row .k{color:var(--text2)}
-.info-row .v{font-weight:500;color:var(--text)}
-.btn-primary{width:100%;padding:14px;font-size:16px;font-weight:600;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;transition:all 0.2s;letter-spacing:-0.2px}
-.btn-primary:active{opacity:0.7}
-.btn-primary:disabled{opacity:0.35;cursor:not-allowed}
-.btn-primary.success{background:var(--success)}
-.btn-secondary{width:100%;padding:10px;font-size:14px;font-weight:500;background:var(--bg2);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit}
-.btn-danger{width:100%;padding:11px;font-size:14px;font-weight:500;background:transparent;color:var(--danger);border:0.5px solid var(--danger-border);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;margin-top:10px}
-.btn-sm{font-size:13px;padding:7px 12px;background:var(--bg2);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;white-space:nowrap}
-.divider{border:none;border-top:0.5px solid var(--border);margin:13px 0}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:0.5px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 13px;cursor:pointer;border:none;background:transparent;font-family:inherit;gap:3px}
-.nav-icon{font-size:22px;line-height:1}
-.nav-lbl{font-size:11px;font-weight:500;color:var(--text3)}
-.nav-btn.on .nav-lbl{color:var(--text)}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:11px 22px;border-radius:22px;font-size:14px;font-weight:500;opacity:0;transition:opacity 0.25s;pointer-events:none;white-space:nowrap;z-index:999}
-.toast.show{opacity:1}
-.curr-grid-btn{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:8px}
-.cg-btn{padding:10px 4px;text-align:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all 0.15s}
-.cg-btn.on{background:var(--text);border-color:var(--text)}
-.cg-btn .cflag{font-size:16px;display:block;margin-bottom:3px;line-height:1}
-.cg-btn .ccode{font-size:11px;font-weight:500;color:var(--text2);display:block}
-.cg-btn.on .ccode{color:var(--bg)}
-.cg-btn .cname{font-size:11px;color:var(--text3);display:block;margin-top:1px}
-.cg-btn.on .cname{color:var(--bg);opacity:0.7}
-.other-curr-btn{width:100%;padding:8px;font-size:12px;color:var(--text3);background:transparent;border:0.5px dashed var(--border2);border-radius:var(--radius-sm);cursor:pointer;text-align:center;font-family:inherit;margin-bottom:8px}
-.amt-row{display:none;align-items:center;gap:10px;padding:10px 12px;background:var(--accent-bg);border-radius:var(--radius-sm);border:0.5px solid var(--accent-border);margin-bottom:8px}
-.amt-row.show{display:flex}
-.amt-flag{font-size:18px}
-.amt-label{font-size:13px;color:var(--accent);flex:1}
-.amt-label strong{font-weight:600}
-.amt-input{width:90px;font-size:15px;font-weight:500;color:var(--text);border:none;background:transparent;text-align:right;outline:none;font-family:inherit}
-.add-slot-btn{width:100%;padding:9px;font-size:13px;color:var(--text2);background:var(--bg2);border:0.5px dashed var(--border2);border-radius:var(--radius-sm);cursor:pointer;text-align:center;font-family:inherit}
-.parent-amt-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border-radius:var(--radius-sm);margin-bottom:8px}
-.parent-amt-row:last-child{margin-bottom:0}
-.parent-flag{font-size:18px}
-.parent-label{font-size:13px;color:var(--text2);flex:1}
-.parent-label strong{color:var(--text);font-weight:500}
-.parent-input{width:100px;font-size:15px;font-weight:500;color:var(--text);border:none;background:transparent;text-align:right;outline:none;font-family:inherit}
-.quick-amount-row{display:flex;align-items:center;gap:10px;padding:18px 16px;background:var(--bg2);border-radius:var(--radius-sm);margin-bottom:16px;border:0.5px solid var(--border2)}
-.quick-amount-input{flex:1;font-size:48px;font-weight:600;color:var(--text);border:none;background:transparent;outline:none;font-family:inherit;line-height:1;min-width:0}
-.quick-curr-pill{position:relative;font-size:13px;font-weight:500;color:var(--text2);background:var(--bg2);padding:6px 11px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);cursor:pointer;white-space:nowrap;flex-shrink:0;margin-bottom:4px;transition:all 0.15s}
-.quick-curr-pill.open{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
-.qc-popup{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:6px;z-index:300;min-width:140px}
-.qc-popup.show{display:block}
-.qc-opt{padding:8px 12px;font-size:14px;color:var(--text);border-radius:var(--radius-sm);cursor:pointer;display:flex;align-items:center;gap:8px}
-.qc-opt:hover{background:var(--bg2)}
-.qc-opt.sel{font-weight:500;color:var(--accent)}
-.cat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:14px}
-.cat-btn{padding:12px 4px;text-align:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all 0.15s;font-family:inherit;border:none;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.cat-btn.on{background:var(--text);color:var(--bg)}
-.error-banner{display:none;background:var(--danger-bg);border:0.5px solid var(--danger-border);border-radius:var(--radius-sm);padding:10px 14px;margin-top:10px;font-size:13px;color:var(--danger);align-items:center;gap:10px}
-.error-banner.show{display:flex}
-.error-banner-retry{font-size:12px;font-weight:500;color:var(--danger);background:transparent;border:0.5px solid var(--danger-border);border-radius:var(--radius-sm);padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
-.quick-item-input{width:100%;font-size:15px;color:var(--text);border:none;border-bottom:0.5px solid var(--border2);background:transparent;padding:4px 0 10px;outline:none;margin-bottom:14px;font-family:inherit}
-.auto-section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:8px}
-.pills-row{display:flex;gap:6px;flex-wrap:wrap}
-.qpill{position:relative;font-size:13px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);border-radius:20px;padding:10px 14px;cursor:pointer;transition:all 0.15s;min-height:44px;display:flex;align-items:center}
-.qpill.open{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border)}
-.qpill-popup{display:none;position:absolute;bottom:calc(100% + 6px);left:0;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:6px;z-index:300;min-width:110px;white-space:nowrap}
-.qpill-popup.show{display:block}
-.qpill-opt{padding:7px 12px;font-size:13px;color:var(--text);border-radius:var(--radius-sm);cursor:pointer}
-.qpill-opt:hover{background:var(--bg2)}
-.qpill-opt.sel{font-weight:500;color:var(--accent)}
-.curr-item-row{display:flex;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--border)}
-.curr-item-row:last-child{border-bottom:none;padding-bottom:0}
-.ci-flag{font-size:20px;margin-right:10px;flex-shrink:0}
-.ci-info{flex:1}
-.ci-code{font-size:14px;font-weight:500;color:var(--text)}
-.ci-sub{font-size:11px;color:var(--text3);margin-top:3px}
-.ci-right{text-align:right}
-.ci-remain{font-size:18px;font-weight:600;color:var(--text)}
-.ci-label{font-size:11px;color:var(--text3);margin-top:2px}
-.hist-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:0.5px solid var(--border);font-size:13px}
-.hist-row:last-child{border-bottom:none;padding-bottom:0}
-.hist-date{color:var(--text3);min-width:32px;font-size:11px}
-.hist-from{color:var(--text2)}
-.hist-arr{color:var(--text3)}
-.hist-to{font-weight:500;color:var(--text);flex:1}
-.hist-note{font-size:11px;color:var(--text3)}
-.manual-row{display:flex;align-items:center;gap:6px;margin-top:8px}
-.manual-row input{flex:1;font-size:14px;padding:7px 10px}
+
+/* ===== 頁面結構 ===== */
+#app{height:100vh;display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative;overflow:hidden}
+.screen{display:none;flex:1;overflow-y:auto;padding:16px 14px 6px;background:var(--bg)}
+.screen.active{display:block}
+
+/* ===== PIN 畫面 ===== */
+#pin-screen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#pin-screen.hidden{display:none}
+.pin-logo{font-size:32px;font-weight:700;color:var(--brand-dark);margin-bottom:6px;letter-spacing:-1px}
+.pin-sub{font-size:14px;color:var(--text2);margin-bottom:36px;text-align:center}
+.pin-dots{display:flex;gap:16px;margin-bottom:40px}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--brand-mid);background:transparent;transition:background .1s}
+.pin-dot.filled{background:var(--brand)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:280px}
+.pin-key{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:18px;font-size:24px;font-weight:500;text-align:center;cursor:pointer;user-select:none;transition:background .1s;color:var(--text)}
+.pin-key:active{background:var(--brand-light)}
+.pin-key.empty{background:transparent;border-color:transparent;pointer-events:none}
+.pin-key.del{font-size:18px;color:var(--text2)}
+.pin-error{font-size:13px;color:var(--danger);margin-top:16px;min-height:20px;text-align:center}
+
+/* ===== 空狀態（無旅程）===== */
+#empty-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+#empty-screen.hidden{display:none}
+.empty-icon{font-size:48px;color:var(--brand-mid);margin-bottom:16px;opacity:.6}
+.empty-title{font-size:18px;font-weight:500;color:var(--text);margin-bottom:8px}
+.empty-sub{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.6}
+.btn-start{padding:14px 32px;background:var(--brand-dark);color:white;border:none;border-radius:var(--radius-md);font-size:15px;font-weight:500;cursor:pointer}
+
+/* ===== 同步狀態 ===== */
+.sync-bar{display:flex;align-items:center;justify-content:flex-end;margin-bottom:10px;gap:5px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--success)}
+.sync-dot.error{background:var(--danger)}
+.sync-dot.syncing{background:var(--warm);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sync-label{font-size:11px;color:var(--text2)}
+
+/* ===== 卡片 ===== */
+.card{background:var(--card);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:14px 16px;margin-bottom:10px}
+
+/* ===== Section Label ===== */
+.slabel{font-size:11px;font-weight:500;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;margin-top:14px}
+.slabel:first-child{margin-top:0}
+
+/* ===== 總覽頁 ===== */
+.total-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.total-big{font-size:38px;font-weight:500;color:var(--text);line-height:1}
+.count-badge{font-size:11px;color:var(--brand-dark);background:var(--brand-light);border-radius:20px;padding:3px 10px;font-weight:500;white-space:nowrap;flex-shrink:0}
+.total-sub{font-size:12px;color:var(--text2);margin-top:4px}
+.sub-row{display:grid;grid-template-columns:1fr 1fr;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)}
+.sub-item{padding:0 16px}
+.sub-item:first-child{padding-left:0;border-right:0.5px solid var(--border)}
+.sub-item:last-child{padding-right:0}
+.sub-lb{font-size:11px;color:var(--text2)}
+.sub-vl{font-size:18px;font-weight:500;color:var(--text);margin-top:3px}
+
+.person-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--border)}
+.person-row:last-child{border-bottom:none}
+.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.av-s{background:var(--brand-light);color:var(--brand-dark)}
+.av-q{background:var(--warm-light);color:var(--warm-dark)}
+.pname{font-size:13px;font-weight:500;min-width:36px;color:var(--text)}
+.bar-bg{flex:1;height:5px;border-radius:3px;background:#EEF5F6;overflow:hidden;margin:0 8px}
+.bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.bar-s{background:var(--brand)}
+.bar-q{background:var(--warm)}
+.pamount{font-size:13px;font-weight:500;color:var(--text);min-width:56px;text-align:right}
+
+.pie-section{display:flex;align-items:center;gap:14px}
+.legend{flex:1}
+.leg-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text);margin-bottom:6px}
+.leg-item:last-child{margin-bottom:0}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.leg-right{margin-left:auto;text-align:right}
+.leg-amt{font-size:12px;font-weight:500;color:var(--text)}
+.leg-pct{font-size:10px;color:var(--text2)}
+
+/* ===== 新增頁 ===== */
+.add-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px}
+.pill{display:flex;align-items:center;gap:5px;background:var(--card);border:0.5px solid var(--border);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text);max-width:60%;overflow:hidden}
+.pill span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill i{font-size:14px;color:var(--text2);flex-shrink:0}
+.date-pill{display:flex;align-items:center;gap:5px;background:var(--card);border:0.5px solid var(--border);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:13px;color:var(--text);white-space:nowrap;flex-shrink:0}
+.date-pill i{font-size:14px;color:var(--text2)}
+
+.amt-block{border-radius:var(--radius-lg);padding:20px 20px 16px;margin-bottom:10px;transition:background .3s,border-color .3s;border:0.5px solid rgba(24,168,196,0.2)}
+.amt-block.normal{background:var(--brand-light)}
+.amt-block.success{background:#1D9E75;border-color:#1D9E75}
+.amt-label{font-size:12px;color:var(--brand-dark);margin-bottom:10px;font-weight:500}
+.amt-block.success .amt-label{color:white}
+.amt-main-row{display:flex;align-items:flex-end;justify-content:space-between}
+.amt-number{font-size:52px;font-weight:500;color:var(--brand-dark);line-height:1;flex:1;min-width:0;cursor:text}
+.amt-block.success .amt-number{color:white}
+.amt-cur-btn{display:flex;align-items:center;gap:4px;background:white;border:none;border-radius:20px;padding:6px 14px;font-size:14px;font-weight:500;color:var(--brand-dark);cursor:pointer;flex-shrink:0;margin-left:12px;margin-bottom:6px}
+.amt-cur-btn i{font-size:13px}
+.amt-converted{font-size:13px;color:var(--brand-dark);margin-top:10px;opacity:.8;min-height:18px}
+.amt-block.success .amt-converted{color:rgba(255,255,255,.85)}
+.success-msg{font-size:14px;font-weight:500;color:white;display:none;margin-top:10px;align-items:center;gap:6px}
+.amt-block.success .success-msg{display:flex}
+.amt-block.success .amt-converted{display:none}
+
+.desc-input{width:100%;padding:11px 14px;font-size:15px;border:0.5px solid var(--border);border-radius:var(--radius-lg);background:var(--card);color:var(--text);outline:none;margin-bottom:10px}
+.desc-input::placeholder{color:var(--text2)}
+
+.cat-row{display:flex;gap:5px;margin-bottom:10px}
+.cat-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 2px;border-radius:var(--radius-md);border:0.5px solid var(--border);background:var(--card);cursor:pointer;font-size:10px;color:var(--text2);gap:4px;user-select:none;transition:all .1s}
+.cat-btn .ico{font-size:20px}
+.cat-btn.on{background:var(--brand-light);border-color:var(--brand-mid);color:var(--brand-dark);font-weight:500}
+
+.auto-wrap{margin-bottom:12px}
+.auto-label{font-size:11px;color:var(--text2);margin-bottom:8px}
+.auto-chips{display:flex;border-radius:var(--radius-md);overflow:hidden;border:0.5px solid var(--border)}
+.achip{flex:1;text-align:center;padding:10px 4px;font-size:12px;background:#EEF5F6;color:var(--text);border-right:0.5px solid var(--border);cursor:pointer;user-select:none;transition:background .1s;line-height:1.3}
+.achip:last-child{border-right:none}
+.achip:active{background:var(--brand-light)}
+
+.submit-row{display:flex;gap:8px}
+.btn-main{flex:1;padding:14px;background:#1A2C2E;color:white;border:none;border-radius:var(--radius-md);font-size:15px;font-weight:500;cursor:pointer;transition:opacity .1s}
+.btn-main:active{opacity:.85}
+.btn-cancel{padding:14px 18px;background:#EEF5F6;color:var(--text2);border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;cursor:pointer}
+
+/* ===== 幣種選擇器 ===== */
+.cur-picker{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:flex-end;justify-content:center}
+.cur-picker.hidden{display:none}
+.cur-picker-inner{background:var(--card);border-radius:var(--radius-xl) var(--radius-xl) 0 0;width:100%;max-width:480px;padding:20px 16px 32px;max-height:70vh;overflow-y:auto}
+.cur-picker-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.cur-picker-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:14px}
+.cur-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cur-item{padding:12px 8px;border-radius:var(--radius-md);border:0.5px solid var(--border);background:var(--bg);text-align:center;cursor:pointer;transition:all .1s}
+.cur-item:active{background:var(--brand-light)}
+.cur-item.selected{background:var(--brand-light);border-color:var(--brand-mid)}
+.cur-flag{font-size:20px;margin-bottom:4px}
+.cur-code{font-size:12px;font-weight:500;color:var(--text)}
+.cur-name{font-size:10px;color:var(--text2);margin-top:1px}
+.cur-manual{border:0.5px dashed var(--border);background:transparent}
+.cur-input-row{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)}
+.cur-input-row input{flex:1;padding:10px 12px;font-size:14px;border:0.5px solid var(--border);border-radius:var(--radius-md);background:var(--bg);color:var(--text);outline:none}
+.cur-input-row button{padding:10px 16px;background:var(--brand-dark);color:white;border:none;border-radius:var(--radius-md);font-size:13px;font-weight:500;cursor:pointer}
+
+/* ===== 紀錄頁 ===== */
+.search-wrap{display:flex;align-items:center;gap:8px;background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:9px 12px;margin-bottom:8px}
+.search-wrap i{color:var(--text2);font-size:16px;flex-shrink:0}
+.search-wrap input{flex:1;border:none;background:transparent;font-size:14px;color:var(--text);outline:none}
+.search-wrap input::placeholder{color:var(--text2)}
+
+.filter-scroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px;scrollbar-width:none}
+.filter-scroll::-webkit-scrollbar{display:none}
+.fchip{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:12px;border:0.5px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;user-select:none}
+.fchip.on{background:var(--brand-light);border-color:var(--brand-mid);color:var(--brand-dark);font-weight:500}
+
+.rec-list{background:var(--card);border-radius:var(--radius-lg);border:0.5px solid var(--border);overflow:hidden}
+.rec-row{position:relative;overflow:hidden;border-bottom:0.5px solid var(--border)}
+.rec-row:last-child{border-bottom:none}
+.action-btns{position:absolute;right:0;top:0;bottom:0;display:flex}
+.action-edit{background:var(--edit-blue);color:white;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;width:70px;font-size:11px;font-weight:500;cursor:pointer;flex-shrink:0}
+.action-edit i{font-size:20px}
+.action-delete{background:var(--danger);color:white;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;width:70px;font-size:11px;font-weight:500;cursor:pointer;flex-shrink:0}
+.action-delete i{font-size:20px}
+.rec-inner{background:var(--card);display:flex;align-items:center;gap:12px;padding:11px 14px;transition:transform .22s ease;user-select:none}
+.rec-inner.swiped{transform:translateX(-140px)}
+.rec-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.rec-info{flex:1;min-width:0}
+.rec-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-meta{font-size:11px;color:var(--text2);margin-top:2px}
+.rec-right{text-align:right;flex-shrink:0}
+.rec-amt{font-size:14px;font-weight:500;color:var(--text)}
+.rec-ori{font-size:11px;color:var(--text2);margin-top:2px}
+.type-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:4px;vertical-align:middle}
+.badge-shared{background:var(--shared-bg);color:var(--shared-text)}
+.badge-qi{background:var(--warm-light);color:var(--warm-dark)}
+.badge-san{background:var(--brand-light);color:var(--brand-dark)}
+
+.empty-rec{padding:40px 20px;text-align:center;color:var(--text2);font-size:14px;background:var(--card);border-radius:var(--radius-lg);border:0.5px solid var(--border)}
+.empty-rec i{display:block;font-size:32px;margin-bottom:10px;opacity:.4}
+
+/* ===== 編輯頁 ===== */
+.edit-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.back-btn{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--text2);cursor:pointer;background:none;border:none;padding:0}
+.delete-top-btn{font-size:13px;color:var(--danger);cursor:pointer;font-weight:500;background:none;border:none;display:flex;align-items:center;gap:4px}
+.edit-form .field{margin-bottom:12px}
+.edit-form label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px}
+.edit-form input,.edit-form select{width:100%;padding:10px 12px;font-size:14px;border:0.5px solid var(--border);border-radius:var(--radius-md);background:var(--bg);color:var(--text);outline:none}
+.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.edit-note{font-size:11px;color:var(--text2);text-align:center;margin-top:8px}
+
+/* ===== 換匯頁 ===== */
+.bal-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.bal-item:last-child{border-bottom:none}
+.bal-left{font-size:13px;font-weight:500;color:var(--text)}
+.bal-right{text-align:right}
+.bal-remain{font-size:14px;font-weight:500;color:var(--success)}
+.bal-detail{font-size:11px;color:var(--text2);margin-top:2px}
+.ex-row{position:relative;overflow:hidden;border-bottom:0.5px solid var(--border)}
+.ex-row:last-child{border-bottom:none}
+.ex-inner{background:var(--card);display:flex;align-items:center;justify-content:space-between;padding:11px 14px;transition:transform .22s ease;user-select:none}
+.ex-inner.swiped{transform:translateX(-140px)}
+.ex-main{font-size:13px;font-weight:500;color:var(--text)}
+.ex-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.btn-outline{width:100%;padding:12px;background:transparent;color:var(--brand-dark);border:0.5px solid var(--brand);border-radius:var(--radius-md);font-size:14px;font-weight:500;cursor:pointer;margin-top:0}
+
+/* ===== Bottom Sheet ===== */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+.sheet-overlay.hidden{display:none}
+.sheet{background:var(--card);border-radius:var(--radius-xl) var(--radius-xl) 0 0;width:100%;max-width:480px;padding:18px 18px 32px;max-height:85vh;overflow-y:auto}
+.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.sheet-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:14px}
+.sheet-field{margin-bottom:12px}
+.sheet-field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px}
+.sheet-field input,.sheet-field select{width:100%;padding:10px 12px;font-size:14px;border:0.5px solid var(--border);border-radius:var(--radius-md);background:var(--bg);color:var(--text);outline:none}
+.sheet-note{font-size:11px;color:var(--text2);margin:4px 0 10px;padding-top:10px;border-top:0.5px solid var(--border)}
+.btn-add-cur{width:100%;padding:9px;background:transparent;color:var(--text2);border:0.5px dashed var(--border);border-radius:var(--radius-md);font-size:13px;cursor:pointer;margin-bottom:10px}
+.btn-sheet{width:100%;padding:13px;background:#1A2C2E;color:white;border:none;border-radius:var(--radius-md);font-size:14px;font-weight:500;cursor:pointer;margin-top:6px}
+
+/* ===== 旅程頁 ===== */
+.trip-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid var(--border);cursor:pointer}
+.trip-item:last-child{border-bottom:none}
+.trip-name-t{font-size:14px;font-weight:500;color:var(--text)}
+.trip-meta-t{font-size:11px;color:var(--text2);margin-top:2px}
+.trip-badge{font-size:11px;background:var(--brand-light);color:var(--brand-dark);padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0}
+.btn-dashed{width:100%;padding:13px;border:0.5px dashed var(--border);background:transparent;color:var(--text2);border-radius:var(--radius-md);font-size:14px;margin-top:4px;cursor:pointer}
+
+/* ===== PIN 確認刪除 ===== */
+.pin-confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px}
+.pin-confirm-overlay.hidden{display:none}
+.pin-confirm-box{background:var(--card);border-radius:var(--radius-xl);padding:24px;width:100%;max-width:320px;text-align:center}
+.pin-confirm-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:6px}
+.pin-confirm-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
+.pin-confirm-dots{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
+.pin-confirm-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--brand-mid);background:transparent}
+.pin-confirm-dot.filled{background:var(--brand)}
+.pin-confirm-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pin-confirm-key{padding:14px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:20px;font-weight:500;cursor:pointer;text-align:center}
+.pin-confirm-key.empty{background:transparent;border-color:transparent;pointer-events:none}
+.pin-confirm-error{font-size:12px;color:var(--danger);margin-top:10px;min-height:18px}
+
+/* ===== 底部導覽 ===== */
+.tabbar{display:flex;background:var(--card);border-top:0.5px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:8px 4px 10px;text-align:center;font-size:11px;color:var(--text2);cursor:pointer;border-top:2px solid transparent;user-select:none}
+.tab.on{color:var(--brand-dark);border-top-color:var(--brand);font-weight:500}
+.tab i{display:block;font-size:20px;margin-bottom:2px}
+
+/* ===== 日期選擇器隱藏 ===== */
+#hidden-date-input{position:absolute;opacity:0;pointer-events:none;width:0;height:0}
+
+/* ===== 通用工具 ===== */
+.spacer{height:8px}
+.divider{height:0.5px;background:var(--border);margin:14px 0}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="topbar">
-    <div class="topbar-row">
-      <h1>旅遊花費記帳</h1>
-      <div class="sync-pill"><span class="sync-dot" id="sync-dot"></span><span id="sync-text">就緒</span></div>
-    </div>
-    <div class="topbar-sub" id="subtitle">請先完成初始設定</div>
+
+<!-- PIN 畫面 -->
+<div id="pin-screen">
+  <div class="pin-logo">howmuch</div>
+  <div class="pin-sub" id="pin-sub-text">輸入 PIN 碼</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
   </div>
-
-  <div class="page active" id="page-setup">
-    <div id="setup-first">
-      <div class="card">
-        <div class="card-title">旅行成員</div>
-        <div class="info-row"><span class="k">成員</span><span class="v">三口 / 七元</span></div>
-      </div>
-      <div class="card">
-        <div class="card-title">旅行名稱</div>
-        <input type="text" id="trip-name-first" placeholder="例如：2025 日本關西">
-      </div>
-      <div class="card">
-        <div class="card-title">帶出的母幣金額</div>
-        <div class="parent-amt-row">
-          <span class="parent-flag">🇹🇼</span>
-          <span class="parent-label">台幣 <strong>TWD</strong></span>
-          <input class="parent-input" type="number" id="init-twd" placeholder="0" min="0">
-        </div>
-        <div class="parent-amt-row">
-          <span class="parent-flag">🇺🇸</span>
-          <span class="parent-label">美金 <strong>USD</strong></span>
-          <input class="parent-input" type="number" id="init-usd" placeholder="0" min="0">
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">當地幣設定</div>
-        <div id="curr-slots-first">
-          <div id="cs1-first">
-            <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 1</div>
-            <div class="curr-grid-btn" id="cg1-first"></div>
-            <button class="other-curr-btn" onclick="toggleManualCurr('m1-first','cg1-first')">✏️ 找不到幣種？手動輸入</button>
-            <input type="text" id="m1-first" placeholder="輸入幣種代碼，例如 AUD" maxlength="5" style="display:none;margin-bottom:8px;text-transform:uppercase">
-            <div class="amt-row" id="ar1-first">
-              <span class="amt-flag" id="af1-first"></span>
-              <span class="amt-label">帶出多少 <strong id="ac1-first"></strong>？</span>
-              <input class="amt-input" type="number" id="ai1-first" placeholder="0" min="0">
-            </div>
-          </div>
-          <div id="cs2-first" style="display:none">
-            <div class="divider"></div>
-            <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 2 <span style="font-size:11px;color:var(--text3)">（選填）</span></div>
-            <div class="curr-grid-btn" id="cg2-first"></div>
-            <button class="other-curr-btn" onclick="toggleManualCurr('m2-first','cg2-first')">✏️ 找不到幣種？手動輸入</button>
-            <input type="text" id="m2-first" placeholder="輸入幣種代碼，例如 AUD" maxlength="5" style="display:none;margin-bottom:8px;text-transform:uppercase">
-            <div class="amt-row" id="ar2-first">
-              <span class="amt-flag" id="af2-first"></span>
-              <span class="amt-label">帶出多少 <strong id="ac2-first"></strong>？</span>
-              <input class="amt-input" type="number" id="ai2-first" placeholder="0" min="0">
-            </div>
-          </div>
-          <button class="add-slot-btn" id="add-slot2-first" onclick="document.getElementById('cs2-first').style.display='block';this.style.display='none'">＋ 新增第二種幣種</button>
-          <div id="cs3-first" style="display:none">
-            <div class="divider"></div>
-            <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 3 <span style="font-size:11px;color:var(--text3)">（選填）</span></div>
-            <div class="curr-grid-btn" id="cg3-first"></div>
-            <button class="other-curr-btn" onclick="toggleManualCurr('m3-first','cg3-first')">✏️ 找不到幣種？手動輸入</button>
-            <input type="text" id="m3-first" placeholder="輸入幣種代碼，例如 AUD" maxlength="5" style="display:none;margin-bottom:8px;text-transform:uppercase">
-            <div class="amt-row" id="ar3-first">
-              <span class="amt-flag" id="af3-first"></span>
-              <span class="amt-label">帶出多少 <strong id="ac3-first"></strong>？</span>
-              <input class="amt-input" type="number" id="ai3-first" placeholder="0" min="0">
-            </div>
-          </div>
-          <button class="add-slot-btn" id="add-slot3-first" onclick="document.getElementById('cs3-first').style.display='block';this.style.display='none'">＋ 新增第三種幣種</button>
-        </div>
-      </div>
-      <button class="btn-primary" onclick="confirmFirstSetup()">開始記帳 →</button>
-    </div>
-
-    <div id="setup-existing" style="display:none">
-      <div class="card">
-        <div class="card-title">目前旅行</div>
-        <div class="info-row"><span class="k">旅行名稱</span><span class="v" id="info-trip">—</span></div>
-        <div class="info-row"><span class="k">消費者</span><span class="v" id="info-names">—</span></div>
-        <div class="info-row"><span class="k">記帳筆數</span><span class="v" id="info-count">0 筆</span></div>
-        <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)">
-          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em">邀請連結</div>
-          <p style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.6">傳給旅伴，點開即可加入同一個記帳清單，不需要任何設定。</p>
-          <button class="btn-secondary" onclick="copyInviteLink()" id="invite-btn">📋 複製邀請連結</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">旅行成員</div>
-        <div class="info-row"><span class="k">成員</span><span class="v">三口 / 七元</span></div>
-      </div>
-      <div class="card card-danger">
-        <div class="card-title card-title-danger">開始新旅行</div>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:13px;line-height:1.65">目前旅行的資料會保留在 Google 試算表中。介面將清空，讓你設定新的旅行。</p>
-        <div class="form-row"><label class="lbl">新旅行名稱</label><input type="text" id="new-trip-name" placeholder="例如：2026 歐洲"></div>
-        <div class="card-title" style="margin-top:12px;margin-bottom:8px">帶出的母幣金額</div>
-        <div class="parent-amt-row">
-          <span class="parent-flag">🇹🇼</span>
-          <span class="parent-label">台幣 <strong>TWD</strong></span>
-          <input class="parent-input" type="number" id="new-init-twd" placeholder="0" min="0">
-        </div>
-        <div class="parent-amt-row">
-          <span class="parent-flag">🇺🇸</span>
-          <span class="parent-label">美金 <strong>USD</strong></span>
-          <input class="parent-input" type="number" id="new-init-usd" placeholder="0" min="0">
-        </div>
-        <div class="card-title" style="margin-top:12px;margin-bottom:8px">當地幣設定</div>
-        <div id="cs1-new">
-          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 1</div>
-          <div class="curr-grid-btn" id="cg1-new"></div>
-          <button class="other-curr-btn" onclick="toggleManualCurr('m1-new','cg1-new')">✏️ 找不到幣種？手動輸入</button>
-          <input type="text" id="m1-new" placeholder="輸入幣種代碼" maxlength="5" style="display:none;margin-bottom:8px;text-transform:uppercase">
-          <div class="amt-row" id="ar1-new">
-            <span class="amt-flag" id="af1-new"></span>
-            <span class="amt-label">帶出多少 <strong id="ac1-new"></strong>？</span>
-            <input class="amt-input" type="number" id="ai1-new" placeholder="0" min="0">
-          </div>
-        </div>
-        <div id="cs2-new" style="display:none">
-          <div class="divider"></div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 2 <span style="font-size:11px;color:var(--text3)">（選填）</span></div>
-          <div class="curr-grid-btn" id="cg2-new"></div>
-          <button class="other-curr-btn" onclick="toggleManualCurr('m2-new','cg2-new')">✏️ 找不到幣種？手動輸入</button>
-          <input type="text" id="m2-new" placeholder="輸入幣種代碼" maxlength="5" style="display:none;margin-bottom:8px;text-transform:uppercase">
-          <div class="amt-row" id="ar2-new">
-            <span class="amt-flag" id="af2-new"></span>
-            <span class="amt-label">帶出多少 <strong id="ac2-new"></strong>？</span>
-            <input class="amt-input" type="number" id="ai2-new" placeholder="0" min="0">
-          </div>
-        </div>
-        <button class="add-slot-btn" id="add-slot2-new" onclick="document.getElementById('cs2-new').style.display='block';this.style.display='none'" style="margin-top:4px">＋ 新增第二種幣種</button>
-        <div id="cs3-new" style="display:none">
-          <div class="divider"></div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">幣種 3 <span style="font-size:11px;color:var(--text3)">（選填）</span></div>
-          <div class="curr-grid-btn" id="cg3-new"></div>
-          <button class="other-curr-btn" onclick="toggleManualCurr('m3-new','cg3-new')">✏️ 找不到幣種？手動輸入</button>
-          <input type="text" id="m3-new" placeholder="輸入幣種代碼" maxlength="5" style="display:none;margin-bottom:8px;text-transform:uppercase">
-          <div class="amt-row" id="ar3-new">
-            <span class="amt-flag" id="af3-new"></span>
-            <span class="amt-label">帶出多少 <strong id="ac3-new"></strong>？</span>
-            <input class="amt-input" type="number" id="ai3-new" placeholder="0" min="0">
-          </div>
-        </div>
-        <button class="add-slot-btn" id="add-slot3-new" onclick="document.getElementById('cs3-new').style.display='block';this.style.display='none'" style="margin-top:4px">＋ 新增第三種幣種</button>
-        <button class="btn-danger" onclick="startNewTrip()">開始新旅行，清空介面</button>
-      </div>
-    </div>
+  <div class="pin-pad">
+    <div class="pin-key" onclick="pinInput('1')">1</div>
+    <div class="pin-key" onclick="pinInput('2')">2</div>
+    <div class="pin-key" onclick="pinInput('3')">3</div>
+    <div class="pin-key" onclick="pinInput('4')">4</div>
+    <div class="pin-key" onclick="pinInput('5')">5</div>
+    <div class="pin-key" onclick="pinInput('6')">6</div>
+    <div class="pin-key" onclick="pinInput('7')">7</div>
+    <div class="pin-key" onclick="pinInput('8')">8</div>
+    <div class="pin-key" onclick="pinInput('9')">9</div>
+    <div class="pin-key empty"></div>
+    <div class="pin-key" onclick="pinInput('0')">0</div>
+    <div class="pin-key del" onclick="pinDel()"><i class="ti ti-backspace"></i></div>
   </div>
+  <div class="pin-error" id="pin-error"></div>
+</div>
 
-  <div class="page" id="page-summary">
-    <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-      <button onclick="fetchTotalsFromSheet()" style="font-size:13px;padding:8px 14px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;min-height:44px">↻ 同步最新</button>
-    </div>
-    <div class="card" style="border-color:var(--accent-border);background:var(--accent-bg)">
-      <div class="card-title card-title-accent">共用花費（台幣）</div>
-      <div id="total-ab" style="font-size:36px;font-weight:600;letter-spacing:-1px;color:var(--accent);margin-top:6px">$0</div>
-      <div style="margin-top:10px;border-top:0.5px solid var(--accent-border);padding-top:10px;display:flex;gap:12px">
-        <div style="flex:1"><div style="font-size:12px;color:var(--accent);opacity:0.7;margin-bottom:4px">出發前</div><div style="font-size:18px;font-weight:500;color:var(--accent)" id="ab-before">$0</div></div>
-        <div style="flex:1"><div style="font-size:12px;color:var(--accent);opacity:0.7;margin-bottom:4px">旅遊中</div><div style="font-size:18px;font-weight:500;color:var(--accent)" id="ab-during">$0</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">個人花費（台幣）</div>
-      <div class="stat-grid" style="margin-top:4px">
-        <div class="stat"><div class="stat-lbl" id="label-a">三口</div><div class="stat-val" id="total-a">$0</div></div>
-        <div class="stat"><div class="stat-lbl" id="label-b">七元</div><div class="stat-val" id="total-b">$0</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">實際支出</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:10px;margin-top:-4px">誰出了多少錢</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:15px;border-bottom:0.5px solid var(--border)">
-        <span style="color:var(--text2)" id="payer-label-a">三口</span>
-        <span style="font-weight:500;color:var(--text)" id="payer-total-a">$0</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:15px">
-        <span style="color:var(--text2)" id="payer-label-b">七元</span>
-        <span style="font-weight:500;color:var(--text)" id="payer-total-b">$0</span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">記帳筆數</div>
-      <div style="font-size:28px;font-weight:600;color:var(--text)" id="summary-count">0 筆</div>
-    </div>
-  </div>
+<!-- 空狀態（無旅程）-->
+<div id="empty-screen" class="hidden">
+  <i class="ti ti-map empty-icon"></i>
+  <div class="empty-title">歡迎使用 howmuch</div>
+  <div class="empty-sub">還沒有旅程記錄<br>先建立第一趟旅程，再開始記帳</div>
+  <button class="btn-start" onclick="openNewTripSheet()">建立第一趟旅程</button>
+</div>
 
-  <div class="page" id="page-currency">
-    <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-      <button onclick="fetchBalancesFromSheet().then(()=>renderCurrencyPage())" style="font-size:13px;padding:8px 14px;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;min-height:44px">↻ 同步換匯</button>
-    </div>
-    <div class="card">
-      <div class="card-title">當地幣餘額</div>
-      <div id="local-currency-list"><p style="font-size:14px;color:var(--text2)">完成設定後顯示</p></div>
-    </div>
-    <div class="card">
-      <div class="card-title">母幣餘額</div>
-      <div id="parent-currency-list"><p style="font-size:14px;color:var(--text2)">完成設定後顯示</p></div>
-    </div>
-    <div class="card card-accent">
-      <div class="card-title card-title-accent">新增換匯</div>
-      <div class="grid2">
-        <div class="form-row"><label class="lbl">日期</label><input type="date" id="ex-date"></div>
-        <div class="form-row"><label class="lbl">花了多少母幣</label><input type="number" id="ex-from-amt" placeholder="0" min="0"></div>
-      </div>
-      <div class="grid2">
-        <div class="form-row"><label class="lbl">母幣種類</label>
-          <select id="ex-from-curr"><option value="TWD">🇹🇼 台幣 TWD</option><option value="USD">🇺🇸 美金 USD</option></select>
-        </div>
-        <div class="form-row"><label class="lbl">換成</label><select id="ex-to-curr"></select></div>
-      </div>
-      <div class="form-row"><label class="lbl">取得當地幣金額</label><input type="number" id="ex-to-amt" placeholder="0" min="0"></div>
-      <div class="form-row"><label class="lbl">備注（選填）</label><input type="text" id="ex-note" placeholder="例如：機場換匯、銀行換匯"></div>
-      <button class="btn-primary" id="exchange-btn" onclick="submitExchange()" style="margin-top:4px">記錄換匯 ✓</button>
-    </div>
-    <div class="card" id="exchange-history-card" style="display:none">
-      <div class="card-title">換匯紀錄</div>
-      <div id="exchange-history-list"></div>
-    </div>
-  </div>
-
-  <div class="page" id="page-add">
-    <div class="card">
-      <div class="card-title">新增消費</div>
-      <div class="quick-amount-row">
-        <input class="quick-amount-input" type="number" id="f-amount" placeholder="0" min="0" oninput="calcTWD()" autofocus>
-        <div class="quick-curr-pill" id="curr-pill" onclick="toggleCurrPill()">
-          <span id="curr-pill-text">TWD</span>
-          <div class="qc-popup" id="curr-popup"></div>
-        </div>
-      </div>
-      <div id="rate-section" style="display:none;margin-bottom:14px">
-        <div style="font-size:12px;color:var(--text2);margin-bottom:6px">匯率（1 <span id="curr-unit"></span> = ? 台幣）<span id="rate-status" style="font-size:11px;color:var(--text3);margin-left:6px"></span></div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="number" id="f-rate" placeholder="抓取中…" step="0.0001" min="0" oninput="calcTWD()" style="flex:1">
-          <div style="font-size:13px;color:var(--text2);white-space:nowrap">≈ <strong id="twd-preview" style="color:var(--text)">$0</strong> TWD</div>
-        </div>
-      </div>
-      <div class="cat-grid" id="cat-grid">
-        <button class="cat-btn" onclick="selCat(this)" data-val="餐飲">🍜 餐飲</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="交通">🚌 交通</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="門票 / 景點">🎟 門票</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="購物">🛍 購物</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="住宿">🏨 住宿</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="機票">✈️ 機票</button>
-        <button class="cat-btn" onclick="selCat(this)" data-val="其他">📦 其他</button>
-      </div>
-      <input class="quick-item-input" type="text" id="f-item" placeholder="項目說明（選填）">
-      <div class="divider" style="margin-bottom:12px"></div>
-      <div class="auto-section-label">自動帶入 — 點擊可修改</div>
-      <div class="pills-row" id="pills-row">
-        <div class="qpill" id="pill-pay" onclick="togglePill('pill-pay','popup-pay')">
-          <span id="pill-pay-text">現金</span>
-          <div class="qpill-popup" id="popup-pay">
-            <div class="qpill-opt sel" onclick="selPill('pill-pay','popup-pay','現金',event)">現金</div>
-            <div class="qpill-opt" onclick="selPill('pill-pay','popup-pay','刷卡',event)">刷卡</div>
-          </div>
-        </div>
-        <div class="qpill" id="pill-timing" onclick="togglePill('pill-timing','popup-timing')">
-          <span id="pill-timing-text">旅遊中</span>
-          <div class="qpill-popup" id="popup-timing">
-            <div class="qpill-opt sel" onclick="selPill('pill-timing','popup-timing','旅遊中',event)">旅遊中</div>
-            <div class="qpill-opt" onclick="selPill('pill-timing','popup-timing','出發前',event)">出發前</div>
-          </div>
-        </div>
-        <div class="qpill" id="pill-payer" onclick="togglePill('pill-payer','popup-payer')">
-          <span id="pill-payer-text">A 支付</span>
-          <div class="qpill-popup" id="popup-payer">
-            <div class="qpill-opt sel" id="payer-opt-a" onclick="selPayerPill(this,event)">A</div>
-            <div class="qpill-opt" id="payer-opt-b" onclick="selPayerPill(this,event)">B</div>
-          </div>
-        </div>
-        <div class="qpill" id="pill-split" onclick="togglePill('pill-split','popup-split')">
-          <span id="pill-split-text">共用</span>
-          <div class="qpill-popup" id="popup-split">
-            <div class="qpill-opt sel" onclick="selPill('pill-split','popup-split','共用',event)">共用</div>
-            <div class="qpill-opt" onclick="selPill('pill-split','popup-split','三口',event)">三口</div>
-            <div class="qpill-opt" onclick="selPill('pill-split','popup-split','七元',event)">七元</div>
-          </div>
-        </div>
-        <div class="qpill" id="pill-date" style="position:relative;overflow:hidden">
-          <span id="pill-date-text">今天</span>
-          <input type="date" id="f-date" onchange="updateDatePill()" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
-        </div>
-      </div>
-      <div style="height:16px"></div>
+<!-- 幣種選擇器 -->
+<div class="cur-picker hidden" id="cur-picker" onclick="closeCurPicker(event)">
+  <div class="cur-picker-inner">
+    <div class="cur-picker-handle"></div>
+    <div class="cur-picker-title">選擇幣種</div>
+    <div class="cur-grid" id="cur-grid"></div>
+    <div class="cur-input-row" id="cur-manual-row" style="display:none">
+      <input type="text" id="cur-manual-input" placeholder="輸入幣種代碼，例：HUF" maxlength="6" style="text-transform:uppercase">
+      <button onclick="confirmManualCur()">確認</button>
     </div>
   </div>
 </div>
 
-<nav class="bottom-nav" id="bottom-nav-main">
-  <button class="nav-btn" id="nav-summary" onclick="goPage('summary')"><span class="nav-icon">📊</span><span class="nav-lbl">分帳總覽</span></button>
-  <button class="nav-btn" id="nav-currency" onclick="goPage('currency')"><span class="nav-icon">💱</span><span class="nav-lbl">外幣換匯</span></button>
-  <button class="nav-btn" id="nav-add" onclick="goPage('add')"><span class="nav-icon">➕</span><span class="nav-lbl">新增消費</span></button>
-  <button class="nav-btn on" id="nav-setup" onclick="goPage('setup')"><span class="nav-icon">⚙️</span><span class="nav-lbl">設定</span></button>
-</nav>
-
-<div id="bottom-nav-submit" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));background:var(--bg3);border-top:0.5px solid var(--border);flex-direction:column;gap:8px">
-  <div class="error-banner" id="submit-error">
-    <span style="flex:1">⚠️ 同步失敗，資料已暫存</span>
-    <button class="error-banner-retry" onclick="retryLastSubmit()">重試</button>
-  </div>
-  <div style="display:flex;flex-direction:row;gap:10px;align-items:center">
-    <button onclick="submitEntry()" id="submit-btn" class="btn-primary" style="flex:1;padding:16px">送出記帳 ✓</button>
-    <button onclick="goPage('summary')" style="flex:0 0 68px;padding:16px 0;font-size:14px;font-weight:500;background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-family:inherit">取消</button>
+<!-- 換匯 Bottom Sheet -->
+<div class="sheet-overlay hidden" id="exchange-sheet" onclick="closeSheetOnBg(event,'exchange-sheet')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="exchange-sheet-title">新增換匯</div>
+    <div class="two-col">
+      <div class="sheet-field">
+        <label>母幣種類</label>
+        <select id="ex-from-cur">
+          <option value="TWD">🇹🇼 TWD 台幣</option>
+          <option value="USD">🇺🇸 USD 美金</option>
+        </select>
+      </div>
+      <div class="sheet-field">
+        <label>花了多少</label>
+        <input type="number" inputmode="decimal" id="ex-from-amt" placeholder="5000">
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="sheet-field">
+        <label>換成</label>
+        <select id="ex-to-cur">
+          <option value="JPY">🇯🇵 JPY 日幣</option>
+          <option value="EUR">🇪🇺 EUR 歐元</option>
+          <option value="USD">🇺🇸 USD 美金</option>
+          <option value="KRW">🇰🇷 KRW 韓元</option>
+          <option value="THB">🇹🇭 THB 泰銖</option>
+          <option value="VND">🇻🇳 VND 越南盾</option>
+          <option value="PHP">🇵🇭 PHP 披索</option>
+          <option value="GBP">🇬🇧 GBP 英鎊</option>
+          <option value="AUD">🇦🇺 AUD 澳幣</option>
+          <option value="HKD">🇭🇰 HKD 港幣</option>
+          <option value="SGD">🇸🇬 SGD 新幣</option>
+        </select>
+      </div>
+      <div class="sheet-field">
+        <label>換得多少</label>
+        <input type="number" inputmode="decimal" id="ex-to-amt" placeholder="125">
+      </div>
+    </div>
+    <div class="sheet-field">
+      <label>備注（選填）</label>
+      <input type="text" id="ex-note" placeholder="在機場換的">
+    </div>
+    <input type="hidden" id="ex-editing-id">
+    <button class="btn-sheet" onclick="saveExchange()">記錄換匯 ✓</button>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- 新旅程 Bottom Sheet -->
+<div class="sheet-overlay hidden" id="new-trip-sheet" onclick="closeSheetOnBg(event,'new-trip-sheet')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">新旅程設定</div>
+    <div class="sheet-field">
+      <label>旅行名稱</label>
+      <input type="text" id="trip-name-input" placeholder="例：日本京都">
+    </div>
+    <div class="two-col">
+      <div class="sheet-field">
+        <label>🇹🇼 帶出台幣</label>
+        <input type="number" inputmode="decimal" id="trip-twd" placeholder="20000">
+      </div>
+      <div class="sheet-field">
+        <label>🇺🇸 帶出美金</label>
+        <input type="number" inputmode="decimal" id="trip-usd" placeholder="0">
+      </div>
+    </div>
+    <div class="sheet-note">當地幣設定</div>
+    <div id="trip-cur-rows">
+      <div class="two-col" id="trip-cur-row-1">
+        <div class="sheet-field">
+          <label>幣種 1</label>
+          <select id="trip-cur-1" onchange="handleTripCurChange(this,1)">
+            <option value="JPY">🇯🇵 JPY 日幣</option>
+            <option value="EUR">🇪🇺 EUR 歐元</option>
+            <option value="USD">🇺🇸 USD 美金</option>
+            <option value="KRW">🇰🇷 KRW 韓元</option>
+            <option value="THB">🇹🇭 THB 泰銖</option>
+            <option value="VND">🇻🇳 VND 越南盾</option>
+            <option value="PHP">🇵🇭 PHP 披索</option>
+            <option value="GBP">🇬🇧 GBP 英鎊</option>
+            <option value="AUD">🇦🇺 AUD 澳幣</option>
+            <option value="HKD">🇭🇰 HKD 港幣</option>
+            <option value="SGD">🇸🇬 SGD 新幣</option>
+            <option value="MANUAL">✏️ 手動輸入</option>
+          </select>
+        </div>
+        <div class="sheet-field">
+          <label>帶出多少</label>
+          <input type="number" inputmode="decimal" id="trip-cur-amt-1" placeholder="300">
+        </div>
+      </div>
+    </div>
+    <button class="btn-add-cur" id="add-cur-btn" onclick="addTripCurRow()">+ 新增第二種幣種</button>
+    <button class="btn-sheet" onclick="saveNewTrip()">開始記帳 →</button>
+  </div>
+</div>
 
-<script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbycX3YdSowaRzf1kawigSqOn9mXCaHn52TxAUlu5DIfC79mR6XFWL7UM1JY0UxFUz_E/exec";
-const STORAGE_KEY='travel_expense_v4';
-const CURR_LIST=[
-  {code:'JPY',flag:'🇯🇵',name:'日圓'},{code:'GBP',flag:'🇬🇧',name:'英鎊'},
-  {code:'EUR',flag:'🇪🇺',name:'歐元'},{code:'KRW',flag:'🇰🇷',name:'韓元'},
-  {code:'THB',flag:'🇹🇭',name:'泰銖'},{code:'VND',flag:'🇻🇳',name:'越南盾'},
-  {code:'PHP',flag:'🇵🇭',name:'披索'},{code:'USD',flag:'🇺🇸',name:'美金'},
+<!-- PIN 確認刪除 -->
+<div class="pin-confirm-overlay hidden" id="pin-confirm-overlay">
+  <div class="pin-confirm-box">
+    <div class="pin-confirm-title">確認刪除</div>
+    <div class="pin-confirm-sub" id="pin-confirm-sub">輸入 PIN 碼確認刪除這趟旅程</div>
+    <div class="pin-confirm-dots">
+      <div class="pin-confirm-dot" id="pcd0"></div>
+      <div class="pin-confirm-dot" id="pcd1"></div>
+      <div class="pin-confirm-dot" id="pcd2"></div>
+      <div class="pin-confirm-dot" id="pcd3"></div>
+    </div>
+    <div class="pin-confirm-pad">
+      <div class="pin-confirm-key" onclick="pinConfirmInput('1')">1</div>
+      <div class="pin-confirm-key" onclick="pinConfirmInput('2')">2</div>
+      <div class="pin-confirm-key" onclick="pinConfirmInput('3')">3</div>
+      <div class="pin-confirm-key" onclick="pinConfirmInput('4')">4</div>
+      <div class="pin-confirm-key" onclick="pinConfirmInput('5')">5</div>
+      <div class="pin-confirm-key" onclick="pinConfirmInput('6')">6</div>
+      <div class="pin-confirm-key" onclick="pinConfirmInput('7')">7</div>
+      <div class="pin-confirm-key" onclick="pinConfirmInput('8')">8</div>
+      <div class="pin-confirm-key" onclick="pinConfirmInput('9')">9</div>
+      <div class="pin-confirm-key empty"></div>
+      <div class="pin-confirm-key" onclick="pinConfirmInput('0')">0</div>
+      <div class="pin-confirm-key empty" onclick="pinConfirmDel()"><i class="ti ti-backspace" style="font-size:18px;color:var(--text2)"></i></div>
+    </div>
+    <div class="pin-confirm-error" id="pin-confirm-error"></div>
+    <button onclick="closePinConfirm()" style="margin-top:12px;width:100%;padding:10px;background:transparent;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:13px;color:var(--text2);cursor:pointer">取消</button>
+  </div>
+</div>
+
+<!-- 主 App -->
+<div id="app">
+
+  <!-- 總覽 -->
+  <div id="s-overview" class="screen active">
+    <div class="sync-bar">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span class="sync-label" id="sync-label">已同步</span>
+    </div>
+    <div class="slabel">共用花費</div>
+    <div class="card" id="overview-shared-card">
+      <div class="total-row">
+        <div class="total-big" id="ov-total">$0</div>
+        <span class="count-badge" id="ov-count">共 0 筆</span>
+      </div>
+      <div class="total-sub">共用小計（台幣）</div>
+      <div class="sub-row">
+        <div class="sub-item"><div class="sub-lb">出發前</div><div class="sub-vl" id="ov-before">$0</div></div>
+        <div class="sub-item"><div class="sub-lb">旅遊中</div><div class="sub-vl" id="ov-during">$0</div></div>
+      </div>
+    </div>
+    <div class="slabel">出了多少錢</div>
+    <div class="card" style="padding:10px 16px">
+      <div class="person-row">
+        <div class="av av-s">三口</div>
+        <div class="pname">三口</div>
+        <div class="bar-bg"><div class="bar-fill bar-s" id="bar-san" style="width:0%"></div></div>
+        <div class="pamount" id="ov-san-paid">$0</div>
+      </div>
+      <div class="person-row">
+        <div class="av av-q">七元</div>
+        <div class="pname">七元</div>
+        <div class="bar-bg"><div class="bar-fill bar-q" id="bar-qi" style="width:0%"></div></div>
+        <div class="pamount" id="ov-qi-paid">$0</div>
+      </div>
+    </div>
+    <div class="slabel">個人購物</div>
+    <div class="card" style="padding:10px 16px">
+      <div class="person-row">
+        <div class="av av-s">三口</div>
+        <div class="pname">三口</div>
+        <div class="bar-bg"><div class="bar-fill bar-s" id="bar-san-priv" style="width:0%"></div></div>
+        <div class="pamount" id="ov-san-priv">$0</div>
+      </div>
+      <div class="person-row">
+        <div class="av av-q">七元</div>
+        <div class="pname">七元</div>
+        <div class="bar-bg"><div class="bar-fill bar-q" id="bar-qi-priv" style="width:0%"></div></div>
+        <div class="pamount" id="ov-qi-priv">$0</div>
+      </div>
+    </div>
+    <div class="slabel">類別統計</div>
+    <div class="card" id="cat-stat-card">
+      <div class="pie-section">
+        <svg id="pie-svg" width="80" height="80" viewBox="0 0 80 80"></svg>
+        <div class="legend" id="pie-legend"></div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- 新增 -->
+  <div id="s-add" class="screen">
+    <div class="add-topbar">
+      <div class="pill" onclick="switchTab('trips')">
+        <i class="ti ti-map-pin"></i>
+        <span id="add-trip-name">選擇旅程</span>
+        <i class="ti ti-chevron-down"></i>
+      </div>
+      <div class="date-pill" onclick="openDatePicker()">
+        <i class="ti ti-calendar"></i>
+        <span id="add-date-label">今天</span>
+      </div>
+    </div>
+    <input type="date" id="hidden-date-input" onchange="onDateChange(this.value)">
+    <div class="amt-block normal" id="amt-block">
+      <div class="amt-label" id="amt-label-text">花了多少？</div>
+      <div class="amt-main-row">
+        <div class="amt-number" id="amt-display" onclick="focusAmtInput()">0</div>
+        <button class="amt-cur-btn" onclick="openCurPicker('add')">
+          <span id="amt-cur-display">TWD</span>
+          <i class="ti ti-chevron-down"></i>
+        </button>
+      </div>
+      <div class="amt-converted" id="amt-converted"></div>
+      <div class="success-msg" id="success-msg"><i class="ti ti-check"></i> 已記錄！</div>
+    </div>
+    <input type="number" inputmode="decimal" id="amt-hidden-input" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" oninput="onAmtInput(this.value)">
+    <input type="text" class="desc-input" id="add-desc" placeholder="項目說明（選填）">
+    <div class="cat-row" id="cat-row">
+      <div class="cat-btn on" data-cat="餐飲" onclick="selectCat(this)"><span class="ico">🍜</span>餐飲</div>
+      <div class="cat-btn" data-cat="交通" onclick="selectCat(this)"><span class="ico">🚌</span>交通</div>
+      <div class="cat-btn" data-cat="門票" onclick="selectCat(this)"><span class="ico">🎟</span>門票</div>
+      <div class="cat-btn" data-cat="購物" onclick="selectCat(this)"><span class="ico">🛍</span>購物</div>
+      <div class="cat-btn" data-cat="住宿" onclick="selectCat(this)"><span class="ico">🏨</span>住宿</div>
+      <div class="cat-btn" data-cat="其他" onclick="selectCat(this)"><span class="ico">📦</span>其他</div>
+    </div>
+    <div class="auto-wrap">
+      <div class="auto-label">自動帶入 — 點擊可修改</div>
+      <div class="auto-chips">
+        <div class="achip" id="chip-pay" onclick="toggleChip('pay')">刷卡</div>
+        <div class="achip" id="chip-period" onclick="toggleChip('period')">旅遊中</div>
+        <div class="achip" id="chip-payer" onclick="toggleChip('payer')">三口 支付</div>
+        <div class="achip" id="chip-split" onclick="toggleChip('split')">共用</div>
+      </div>
+    </div>
+    <div class="submit-row">
+      <button class="btn-main" onclick="submitRecord()">送出記帳 ✓</button>
+      <button class="btn-cancel" onclick="resetAddForm()">取消</button>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- 紀錄 -->
+  <div id="s-records" class="screen">
+    <div id="rec-list-view">
+      <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="搜尋消費紀錄..." id="search-input" oninput="filterRecords()">
+      </div>
+      <div class="filter-scroll" id="filter-chips">
+        <div class="fchip on" data-cat="全部" onclick="selectFilter(this)">全部</div>
+        <div class="fchip" data-cat="餐飲" onclick="selectFilter(this)">餐飲</div>
+        <div class="fchip" data-cat="交通" onclick="selectFilter(this)">交通</div>
+        <div class="fchip" data-cat="購物" onclick="selectFilter(this)">購物</div>
+        <div class="fchip" data-cat="門票" onclick="selectFilter(this)">門票</div>
+        <div class="fchip" data-cat="住宿" onclick="selectFilter(this)">住宿</div>
+        <div class="fchip" data-cat="其他" onclick="selectFilter(this)">其他</div>
+      </div>
+      <div id="rec-container"></div>
+    </div>
+    <div id="rec-edit-view" style="display:none">
+      <div class="edit-header">
+        <button class="back-btn" onclick="closeEditView()"><i class="ti ti-arrow-left"></i> 返回紀錄</button>
+        <button class="delete-top-btn" onclick="deleteCurrentRecord()"><i class="ti ti-trash"></i> 刪除</button>
+      </div>
+      <div class="card edit-form">
+        <div class="two-col">
+          <div class="field"><label>金額</label><input type="number" inputmode="decimal" id="edit-amt"></div>
+          <div class="field"><label>幣種</label>
+            <select id="edit-cur">
+              <option value="TWD">TWD 台幣</option>
+              <option value="JPY">JPY 日幣</option>
+              <option value="EUR">EUR 歐元</option>
+              <option value="USD">USD 美金</option>
+              <option value="KRW">KRW 韓元</option>
+              <option value="THB">THB 泰銖</option>
+              <option value="VND">VND 越南盾</option>
+              <option value="PHP">PHP 披索</option>
+              <option value="GBP">GBP 英鎊</option>
+              <option value="AUD">AUD 澳幣</option>
+              <option value="HKD">HKD 港幣</option>
+              <option value="SGD">SGD 新幣</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>項目說明</label><input type="text" id="edit-desc"></div>
+        <div class="two-col">
+          <div class="field"><label>類別</label>
+            <select id="edit-cat">
+              <option>餐飲</option><option>交通</option><option>門票</option>
+              <option>購物</option><option>住宿</option><option>其他</option>
+            </select>
+          </div>
+          <div class="field"><label>付款方式</label>
+            <select id="edit-pay"><option>現金</option><option>刷卡</option></select>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field"><label>時間點</label>
+            <select id="edit-period"><option>旅遊中</option><option>出發前</option></select>
+          </div>
+          <div class="field"><label>支付者</label>
+            <select id="edit-payer"><option>三口</option><option>七元</option></select>
+          </div>
+        </div>
+        <div class="field"><label>分帳類型</label>
+          <select id="edit-split"><option>共用</option><option>三口私費</option><option>七元私費</option></select>
+        </div>
+        <div class="field"><label>日期</label><input type="date" id="edit-date"></div>
+        <input type="hidden" id="edit-record-id">
+        <button class="btn-main" style="width:100%;margin-top:4px" onclick="saveEditRecord()">儲存修改</button>
+        <div class="edit-note">右上角可刪除此筆，刪除後無法復原</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- 換匯 -->
+  <div id="s-exchange" class="screen">
+    <div class="slabel">當地幣餘額</div>
+    <div class="card" style="padding:8px 16px" id="local-bal-card">
+      <div style="color:var(--text2);font-size:13px;padding:8px 0">載入中...</div>
+    </div>
+    <div class="slabel">母幣餘額</div>
+    <div class="card" style="padding:8px 16px" id="home-bal-card">
+      <div style="color:var(--text2);font-size:13px;padding:8px 0">載入中...</div>
+    </div>
+    <div class="slabel">換匯紀錄</div>
+    <div class="card" style="padding:6px 16px;margin-bottom:10px" id="exchange-list-card">
+      <div style="color:var(--text2);font-size:13px;padding:8px 0">尚無換匯紀錄</div>
+    </div>
+    <button class="btn-outline" onclick="openExchangeSheet()">+ 新增換匯</button>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- 旅程 -->
+  <div id="s-trips" class="screen">
+    <div class="slabel">我的旅程</div>
+    <div class="card" style="padding:6px 16px;margin-bottom:10px" id="trips-list-card">
+      <div style="color:var(--text2);font-size:13px;padding:8px 0">載入中...</div>
+    </div>
+    <button class="btn-dashed" onclick="openNewTripSheet()">+ 開始新旅程</button>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- 底部導覽 -->
+  <div class="tabbar">
+    <div class="tab on" onclick="switchTab('overview')"><i class="ti ti-chart-pie"></i>總覽</div>
+    <div class="tab" onclick="switchTab('add')"><i class="ti ti-plus"></i>新增</div>
+    <div class="tab" onclick="switchTab('records')"><i class="ti ti-list"></i>紀錄</div>
+    <div class="tab" onclick="switchTab('exchange')"><i class="ti ti-currency-dollar"></i>換匯</div>
+    <div class="tab" onclick="switchTab('trips')"><i class="ti ti-map"></i>旅程</div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js';
+import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, query, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBfweKeodFK7CDu_MD72nRvlewIXKEk7js",
+  authDomain: "howmuch-fea83.firebaseapp.com",
+  projectId: "howmuch-fea83",
+  storageBucket: "howmuch-fea83.firebasestorage.app",
+  messagingSenderId: "452394821631",
+  appId: "1:452394821631:web:adf568769e45789559e9ca"
+};
+
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwX-2R_6GN3vQJb00wlDFKCI-ofT_CdELd1qm1lKfKwBIjt8UV6BPoVy27x-JVHXIVi/exec';
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ===== 貨幣資料 =====
+const CURRENCIES = [
+  {code:'TWD',flag:'🇹🇼',name:'台幣'},
+  {code:'JPY',flag:'🇯🇵',name:'日幣'},
+  {code:'EUR',flag:'🇪🇺',name:'歐元'},
+  {code:'USD',flag:'🇺🇸',name:'美金'},
+  {code:'KRW',flag:'🇰🇷',name:'韓元'},
+  {code:'THB',flag:'🇹🇭',name:'泰銖'},
+  {code:'VND',flag:'🇻🇳',name:'越南盾'},
+  {code:'PHP',flag:'🇵🇭',name:'披索'},
+  {code:'GBP',flag:'🇬🇧',name:'英鎊'},
+  {code:'AUD',flag:'🇦🇺',name:'澳幣'},
+  {code:'HKD',flag:'🇭🇰',name:'港幣'},
+  {code:'SGD',flag:'🇸🇬',name:'新幣'},
 ];
-const NAME_A='三口',NAME_B='七元';
-let nameA=NAME_A,nameB=NAME_B,currencies=[],totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
-let payerTotals={a:0,b:0},entryCount=0,currentTrip='',setupDone=false;
-let parentCurrencies={TWD:0,USD:0},exchangeHistory=[];
-let lastPay='現金',lastTiming='旅遊中',lastPayer='A 支付',lastSplit='共用';
-let _serverBalances=null,_savingConfig=false;
 
-function saveState(){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({nameA,nameB,currencies,totals,payerTotals,entryCount,currentTrip,setupDone,parentCurrencies,exchangeHistory,lastPay,lastTiming,lastPayer,lastSplit}));}catch(e){}
-}
-function loadState(){
-  try{
-    const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;
-    const s=JSON.parse(raw);
-    nameA=NAME_A;nameB=NAME_B;
-    currencies=s.currencies||[];
-    totals=s.totals||{a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
-    ['abBefore','abDuring','aBefore','aDuring','bBefore','bDuring'].forEach(k=>{totals[k]=totals[k]||0;});
-    payerTotals=s.payerTotals||{a:0,b:0};
-    entryCount=s.entryCount||0;currentTrip=s.currentTrip||'';setupDone=s.setupDone||false;
-    parentCurrencies=s.parentCurrencies||{TWD:0,USD:0};
-    exchangeHistory=s.exchangeHistory||[];
-    lastPay=s.lastPay||'現金';lastTiming=s.lastTiming||'旅遊中';
-    lastPayer=s.lastPayer||'A 支付';lastSplit=s.lastSplit||'共用';
-    return setupDone;
-  }catch(e){return false;}
-}
-function setSyncStatus(s){
-  document.getElementById('sync-dot').className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
-  document.getElementById('sync-text').textContent=s==='syncing'?'同步中…':s==='error'?'同步失敗':'已同步';
-}
-function goPage(name){
-  if(name!=='setup'&&!setupDone){showToast('請先完成初始設定');return;}
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
-  document.getElementById('page-'+name).classList.add('active');
-  const nb=document.getElementById('nav-'+name);if(nb)nb.classList.add('on');
-  const isAdd=name==='add';
-  document.getElementById('bottom-nav-main').style.display=isAdd?'none':'flex';
-  document.getElementById('bottom-nav-submit').style.display=isAdd?'flex':'none';
-  if(name==='currency'){renderCurrencyPage();fetchBalancesFromSheet().then(()=>renderCurrencyPage());}
-  if(name==='add'){initQuickEntry();setTimeout(()=>{document.getElementById('f-amount').focus();},100);}
-}
-function buildCurrGrid(gridId,prefix,suffix){
-  const grid=document.getElementById(gridId);if(!grid)return;grid.innerHTML='';
-  CURR_LIST.forEach(c=>{
-    const btn=document.createElement('button');btn.className='cg-btn';btn.type='button';
-    btn.innerHTML=`<span class="cflag">${c.flag}</span><span class="ccode">${c.code}</span><span class="cname">${c.name}</span>`;
-    btn.onclick=()=>selCurrGrid(btn,gridId,prefix,suffix,c);grid.appendChild(btn);
-  });
-}
-function selCurrGrid(btn,gridId,prefix,suffix,c){
-  document.querySelectorAll('#'+gridId+' .cg-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
-  const ar=document.getElementById('ar'+prefix+suffix),af=document.getElementById('af'+prefix+suffix),ac=document.getElementById('ac'+prefix+suffix);
-  af.textContent=c.flag;ac.textContent=c.code;ar.classList.add('show');
-}
-function toggleManualCurr(inputId,gridId){
-  const inp=document.getElementById(inputId);const show=inp.style.display==='none';
-  inp.style.display=show?'block':'none';if(show)inp.focus();
-}
-function initAllCurrGrids(){
-  ['first','new'].forEach(suffix=>{for(let i=1;i<=3;i++)buildCurrGrid('cg'+i+'-'+suffix,i,'-'+suffix);});
-}
-function getCurrFromSlot(i,suffix){
-  const grid=document.getElementById('cg'+i+'-'+suffix);if(!grid)return null;
-  const on=grid.querySelector('.cg-btn.on');
-  if(on){const code=on.querySelector('.ccode').textContent,flag=on.querySelector('.cflag').textContent,init=parseFloat(document.getElementById('ai'+i+'-'+suffix).value)||0;return{code,flag,init,remaining:init};}
-  const manual=document.getElementById('m'+i+'-'+suffix);
-  if(manual&&manual.style.display!=='none'&&manual.value.trim()){const code=manual.value.trim().toUpperCase(),init=parseFloat(document.getElementById('ai'+i+'-'+suffix).value)||0;return{code,flag:'',init,remaining:init};}
-  return null;
-}
-function confirmFirstSetup(){
-  const trip=document.getElementById('trip-name-first').value.trim();
-  if(!trip){showToast('請輸入旅行名稱');return;}
-  const currs=[];for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'first');if(c)currs.push(c);}
-  if(!currs.length){showToast('請至少選擇一種當地幣');return;}
-  const invalid=currs.filter(c=>c.code==='TWD'||c.code==='USD');
-  if(invalid.length){if(!confirm(invalid.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？'))return;}
-  nameA=NAME_A;nameB=NAME_B;currentTrip=trip;
-  currencies=currs.map(c=>({...c,remaining:c.init||0}));
-  try{localStorage.removeItem('travel_expense_v1');localStorage.removeItem('travel_expense_v2');localStorage.removeItem('travel_expense_v3');}catch(e){}
-  totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
-  payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
-  parentCurrencies={TWD:parseFloat(document.getElementById('init-twd').value)||0,USD:parseFloat(document.getElementById('init-usd').value)||0};
-  applySetup(true);
-}
-function startNewTrip(){
-  const trip=document.getElementById('new-trip-name').value.trim();
-  if(!trip){showToast('請輸入新旅行名稱');return;}
-  const currs=[];for(let i=1;i<=3;i++){const c=getCurrFromSlot(i,'new');if(c)currs.push(c);}
-  if(!currs.length){showToast('請至少選擇一種當地幣');return;}
-  const invalidNew=currs.filter(c=>c.code==='TWD'||c.code==='USD');
-  if(invalidNew.length){if(!confirm(invalidNew.map(c=>c.code).join('、')+' 已設為母幣，確定要同時作為當地幣使用嗎？'))return;}
-  currentTrip=trip;currencies=currs.map(c=>({...c,remaining:c.init||0}));
-  totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
-  payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
-  parentCurrencies={TWD:parseFloat(document.getElementById('new-init-twd').value)||0,USD:parseFloat(document.getElementById('new-init-usd').value)||0};
-  try{localStorage.removeItem('travel_expense_v1');localStorage.removeItem('travel_expense_v2');localStorage.removeItem('travel_expense_v3');}catch(e){}
-  applySetup(true);showToast('✓ 新旅行「'+trip+'」已開始');
-}
-function applySetup(saveConfig=false){
-  setupDone=true;
-  _serverBalances=null;
-  document.getElementById('subtitle').textContent=currentTrip;
-  document.getElementById('label-a').textContent=nameA;document.getElementById('label-b').textContent=nameB;
-  document.getElementById('payer-label-a').textContent=nameA;document.getElementById('payer-label-b').textContent=nameB;
-  document.getElementById('info-trip').textContent=currentTrip;
-  document.getElementById('info-names').textContent=nameA+' / '+nameB;
-  document.getElementById('info-count').textContent=entryCount+' 筆';
-  buildCurrPopup();
-  const exTo=document.getElementById('ex-to-curr');exTo.innerHTML='';
-  currencies.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=(c.flag||'')+' '+c.code;exTo.appendChild(o);});
-  document.getElementById('pill-payer-text').textContent=nameA+' 支付';
-  document.getElementById('payer-opt-a').textContent=nameA;document.getElementById('payer-opt-b').textContent=nameB;
-  lastPayer=nameA+' 支付';
-  const payerOpts=document.getElementById('popup-payer').querySelectorAll('.qpill-opt');
-  payerOpts[0].classList.add('sel');payerOpts[1].classList.remove('sel');
-  const today=new Date().toISOString().split('T')[0];
-  document.getElementById('f-date').value=today;document.getElementById('ex-date').value=today;
-  updateTotalsUI();renderCurrencyPage();saveState();
-  if(saveConfig){
-    _savingConfig=true;
-    fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:'saveConfig',nameA,nameB,trip:currentTrip,
-        currencies:currencies.map(c=>({code:c.code,flag:c.flag||'',name:c.name||'',init:c.init||0})),
-        initTWD:parentCurrencies.TWD||0,initUSD:parentCurrencies.USD||0
-      })}).finally(()=>{setTimeout(()=>{_savingConfig=false;},2000);});
-  }
-  document.getElementById('setup-first').style.display='none';
-  document.getElementById('setup-existing').style.display='block';
-  goPage('summary');
-}
-function saveNames(){nameA=NAME_A;nameB=NAME_B;applySetup(true);showToast('✓ 名稱已更新');}
-function buildCurrPopup(){
-  const popup=document.getElementById('curr-popup');popup.innerHTML='';
-  currencies.forEach(c=>{const d=document.createElement('div');d.className='qc-opt';d.innerHTML=(c.flag||'')+' <span>'+c.code+'</span>';d.onclick=(e)=>{e.stopPropagation();selectCurr(c.code,c.flag||'');};popup.appendChild(d);});
-  const twd=document.createElement('div');twd.className='qc-opt';twd.innerHTML='🇹🇼 <span>TWD 台幣</span>';twd.onclick=(e)=>{e.stopPropagation();selectCurr('TWD','🇹🇼');};popup.appendChild(twd);
-  if(currencies.length)selectCurr(currencies[0].code,currencies[0].flag||'',false);
-}
-function toggleCurrPill(){
-  const pill=document.getElementById('curr-pill'),popup=document.getElementById('curr-popup'),showing=popup.classList.contains('show');
-  closeAllPopups();if(!showing){popup.classList.add('show');pill.classList.add('open');}
-}
-function selectCurr(code,flag,closePopup=true){
-  document.getElementById('curr-pill-text').textContent=code;
-  document.querySelectorAll('#curr-popup .qc-opt').forEach(o=>{o.classList.toggle('sel',o.querySelector('span').textContent.startsWith(code));});
-  if(closePopup){document.getElementById('curr-popup').classList.remove('show');document.getElementById('curr-pill').classList.remove('open');}
-  const isTWD=code==='TWD';
-  document.getElementById('rate-section').style.display=isTWD?'none':'block';
-  document.getElementById('curr-unit').textContent=code;
-  if(!isTWD)fetchRate(code);calcTWD();
-}
-function initQuickEntry(){
-  document.getElementById('pill-pay-text').textContent=lastPay;
-  document.getElementById('pill-timing-text').textContent=lastTiming;
-  document.getElementById('pill-payer-text').textContent=lastPayer;
-  document.getElementById('pill-split-text').textContent=lastSplit;
-  updateDatePill();
-  setPopupSel('popup-pay',lastPay);setPopupSel('popup-timing',lastTiming);
-  const payerShort=lastPayer.replace(' 支付','');
-  document.querySelectorAll('#popup-payer .qpill-opt').forEach(o=>{o.classList.toggle('sel',o.textContent===payerShort);});
-  setPopupSel('popup-split',lastSplit);
-}
-function selCat(btn){document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
-function selPayerPill(opt,e){
-  e.stopPropagation();const name=opt.textContent;
-  document.getElementById('pill-payer-text').textContent=name+' 支付';
-  document.querySelectorAll('#popup-payer .qpill-opt').forEach(o=>o.classList.remove('sel'));opt.classList.add('sel');
-  document.getElementById('popup-payer').classList.remove('show');document.getElementById('pill-payer').classList.remove('open');
-}
-function setPopupSel(popupId,val){document.querySelectorAll('#'+popupId+' .qpill-opt').forEach(o=>{o.classList.toggle('sel',o.textContent===val);});}
-function togglePill(pillId,popupId){
-  const pill=document.getElementById(pillId),popup=document.getElementById(popupId),showing=popup.classList.contains('show');
-  closeAllPopups();if(!showing){popup.classList.add('show');pill.classList.add('open');}
-}
-function selPill(pillId,popupId,val,e){
-  e.stopPropagation();document.getElementById(pillId).querySelector('span').textContent=val;
-  document.querySelectorAll('#'+popupId+' .qpill-opt').forEach(o=>o.classList.remove('sel'));e.currentTarget.classList.add('sel');
-  document.getElementById(popupId).classList.remove('show');document.getElementById(pillId).classList.remove('open');
-}
-function updateDatePill(){
-  const val=document.getElementById('f-date').value;
-  if(!val){document.getElementById('pill-date-text').textContent='今天';return;}
-  const d=new Date(val+'T00:00:00');document.getElementById('pill-date-text').textContent=(d.getMonth()+1)+'/'+(d.getDate());
-}
-function closeAllPopups(){
-  document.querySelectorAll('.qpill-popup.show,.qc-popup.show').forEach(p=>{p.classList.remove('show');const parent=p.closest('.qpill,.quick-curr-pill');if(parent)parent.classList.remove('open');});
-}
-document.addEventListener('click',function(e){if(!e.target.closest('.qpill')&&!e.target.closest('.quick-curr-pill'))closeAllPopups();});
-const _rateCache={};
-async function fetchRate(curr){
-  const statusEl=document.getElementById('rate-status'),rateEl=document.getElementById('f-rate');
-  const today=new Date().toISOString().split('T')[0],key=curr.trim().toUpperCase();
-  if(_rateCache[key]){rateEl.value=_rateCache[key].rate.toFixed(4);calcTWD();if(_rateCache[key].date===today){statusEl.textContent='即時匯率 ✓';return;}statusEl.textContent='更新中…';}
-  else{statusEl.textContent='抓取中…';rateEl.placeholder='抓取中…';}
-  try{
-    const res=await fetch(`https://open.er-api.com/v6/latest/${key}`);if(!res.ok)throw new Error('err');
-    const data=await res.json();const rate=data.rates&&data.rates.TWD;
-    if(rate){_rateCache[key]={rate,date:today};rateEl.value=rate.toFixed(4);statusEl.textContent='即時匯率 ✓';calcTWD();}else throw new Error('no TWD');
-  }catch(e){
-    try{
-      const res2=await fetch(`https://api.exchangerate-api.com/v4/latest/${key}`);const data2=await res2.json();const rate2=data2.rates&&data2.rates.TWD;
-      if(rate2){_rateCache[key]={rate:rate2,date:today};rateEl.value=rate2.toFixed(4);statusEl.textContent='即時匯率 ✓';calcTWD();}
-      else{if(!_rateCache[key])statusEl.textContent='請手動填入';else statusEl.textContent='使用上次匯率';}
-    }catch(e2){if(!_rateCache[key]){statusEl.textContent='請手動填入';rateEl.placeholder='請手動填入';}else statusEl.textContent='使用上次匯率';}
+const CUR_FLAGS = {TWD:'🇹🇼',JPY:'🇯🇵',EUR:'🇪🇺',USD:'🇺🇸',KRW:'🇰🇷',THB:'🇹🇭',VND:'🇻🇳',PHP:'🇵🇭',GBP:'🇬🇧',AUD:'🇦🇺',HKD:'🇭🇰',SGD:'🇸🇬'};
+const CUR_NAMES = {TWD:'台幣',JPY:'日幣',EUR:'歐元',USD:'美金',KRW:'韓元',THB:'泰銖',VND:'越南盾',PHP:'披索',GBP:'英鎊',AUD:'澳幣',HKD:'港幣',SGD:'新幣'};
+const CAT_ICONS = {餐飲:'🍜',交通:'🚌',門票:'🎟',購物:'🛍',住宿:'🏨',其他:'📦'};
+const PIE_COLORS = ['#18A8C4','#FFC585','#7DD6E8','#A3C87F','#E8856A','#B4B2A9'];
+
+// ===== 狀態 =====
+let state = {
+  trips: [],
+  currentTripId: null,
+  records: [],
+  exchanges: [],
+  rates: {},
+  addCurrency: 'TWD',
+  addAmount: '',
+  addDate: new Date().toISOString().split('T')[0],
+  chips: { pay:'刷卡', period:'旅遊中', payer:'三口 支付', split:'共用' },
+  filterCat: '全部',
+  searchText: '',
+  editingRecordId: null,
+  curPickerContext: null,
+  pinConfirmCallback: null,
+  pinConfirmVal: '',
+  listeners: {},
+};
+
+// ===== PIN =====
+let pinVal = '';
+let isFirstTime = !localStorage.getItem('howmuch_pin');
+
+function pinInput(n) {
+  if (pinVal.length >= 4) return;
+  pinVal += n;
+  updatePinDots();
+  if (pinVal.length === 4) {
+    setTimeout(() => {
+      const storedPin = localStorage.getItem('howmuch_pin') || '0000';
+      if (isFirstTime) {
+        localStorage.setItem('howmuch_pin', pinVal);
+        document.getElementById('pin-screen').classList.add('hidden');
+        initApp();
+      } else if (pinVal === storedPin) {
+        document.getElementById('pin-screen').classList.add('hidden');
+        initApp();
+      } else {
+        document.getElementById('pin-error').textContent = 'PIN 碼錯誤，請重試';
+        pinVal = '';
+        updatePinDots();
+      }
+    }, 150);
   }
 }
-function calcTWD(){
-  const curr=document.getElementById('curr-pill-text').textContent,amount=parseFloat(document.getElementById('f-amount').value)||0;
-  if(curr==='TWD'){document.getElementById('twd-preview')&&(document.getElementById('twd-preview').textContent='$'+Math.round(amount).toLocaleString());return;}
-  const rate=parseFloat(document.getElementById('f-rate').value)||0,twd=amount&&rate?Math.round(amount*rate):0;
-  const el=document.getElementById('twd-preview');if(el)el.textContent='$'+twd.toLocaleString();
+window.pinInput = pinInput;
+
+function pinDel() {
+  if (!pinVal.length) return;
+  pinVal = pinVal.slice(0,-1);
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
 }
-async function fetchBalancesFromSheet(){
-  if(!currentTrip||_savingConfig)return;
-  try{
-    setSyncStatus('syncing');
-    const res=await fetch(SCRIPT_URL+'?action=getBalances&trip='+encodeURIComponent(currentTrip));
-    const data=await res.json();_serverBalances=data;
-    if(data.localBalances){currencies.forEach(c=>{const b=data.localBalances[c.code];if(b!==undefined)c.remaining=b.remaining;});}
-    if(data.initTWD!==undefined)parentCurrencies.TWD=data.initTWD;
-    if(data.initUSD!==undefined)parentCurrencies.USD=data.initUSD;
-    if(data.history)exchangeHistory=data.history;
-    saveState();setSyncStatus('ok');
-  }catch(e){setSyncStatus('error');}
-}
-function renderCurrencyPage(){
-  const b=_serverBalances;
-  const lList=document.getElementById('local-currency-list');lList.innerHTML='';
-  if(!currencies.length){lList.innerHTML='<p style="font-size:14px;color:var(--text2)">完成設定後顯示</p>';return;}
-  currencies.forEach(c=>{
-    let remaining=c.remaining,cashSpent=0,received=0;
-    if(b&&b.localBalances&&b.localBalances[c.code]){remaining=b.localBalances[c.code].remaining;cashSpent=b.localBalances[c.code].cashSpent;received=b.localBalances[c.code].received;}
-    const row=document.createElement('div');row.className='curr-item-row';
-    row.innerHTML=`<span class="ci-flag">${c.flag||'💵'}</span><div class="ci-info"><div class="ci-code">${c.code}</div><div class="ci-sub">換匯取得 ${Number(received).toLocaleString()} · 現金消費 ${Number(cashSpent).toLocaleString()} ${c.code}</div></div><div class="ci-right"><div class="ci-remain" id="remain-val-${c.code}">${Number(remaining).toLocaleString()}</div><div class="ci-label">剩餘</div></div>`;
-    lList.appendChild(row);
-    const manRow=document.createElement('div');manRow.className='manual-row';
-    manRow.innerHTML=`<input type="number" id="remain-input-${c.code}" placeholder="手動修正餘額" min="0"><button class="btn-sm" onclick="setRemain('${c.code}')">更新</button>`;
-    lList.appendChild(manRow);
-  });
-  const pList=document.getElementById('parent-currency-list');pList.innerHTML='';
-  [['TWD','🇹🇼','台幣'],['USD','🇺🇸','美金']].forEach(([code,flag,name])=>{
-    let initAmt=parentCurrencies[code]||0,spent=getParentSpent(code),cashSp=0;
-    if(b){if(code==='TWD'){initAmt=b.initTWD||0;spent=b.parentSpentTWD||0;cashSp=b.twdCashSpent||0;}if(code==='USD'){initAmt=b.initUSD||0;spent=b.parentSpentUSD||0;cashSp=b.usdCashSpent||0;}}
-    const remain=Math.max(0,initAmt-spent-cashSp);
-    const row=document.createElement('div');row.className='curr-item-row';
-    row.innerHTML=`<span class="ci-flag">${flag}</span><div class="ci-info"><div class="ci-code">${name} ${code}</div><div class="ci-sub">帶出 ${Number(initAmt).toLocaleString()} · 已換出 ${Number(spent).toLocaleString()}</div></div><div class="ci-right"><div class="ci-remain">${Number(remain).toLocaleString()}</div><div class="ci-label">剩餘</div></div>`;
-    pList.appendChild(row);
-    const manRow=document.createElement('div');manRow.className='manual-row';
-    manRow.innerHTML=`<input type="number" id="parent-input-${code}" placeholder="修正帶出金額" min="0"><button class="btn-sm" onclick="setParent('${code}')">更新</button>`;
-    pList.appendChild(manRow);
-  });
-  const history=(b&&b.history)?b.history:exchangeHistory;
-  const histCard=document.getElementById('exchange-history-card'),histList=document.getElementById('exchange-history-list');
-  if(history.length){
-    histCard.style.display='block';histList.innerHTML='';
-    history.slice().reverse().forEach(h=>{
-      const row=document.createElement('div');row.className='hist-row';
-      const d=new Date(h.date+'T00:00:00'),dateStr=(d.getMonth()+1)+'/'+(d.getDate());
-      row.innerHTML=`<span class="hist-date">${dateStr}</span><span class="hist-from">${h.fromCurr} ${Number(h.fromAmount).toLocaleString()}</span><span class="hist-arr">→</span><span class="hist-to">${h.toCurr} ${Number(h.toAmount).toLocaleString()}</span><span class="hist-note">${h.note||''}</span>`;
-      histList.appendChild(row);
-    });
-  }else{histCard.style.display='none';}
-}
-function getCashSpent(code){const cur=currencies.find(c=>c.code===code);if(!cur)return 0;const received=exchangeHistory.filter(h=>h.toCurr===code).reduce((s,h)=>s+Number(h.toAmount),0);return Math.max(0,(cur.init||0)+received-cur.remaining);}
-function getParentSpent(code){return exchangeHistory.filter(h=>h.fromCurr===code).reduce((s,h)=>s+Number(h.fromAmount),0);}
-function setParent(code){
-  const val=parseFloat(document.getElementById('parent-input-'+code).value);if(isNaN(val)){showToast('請輸入有效金額');return;}
-  parentCurrencies[code]=val;document.getElementById('parent-input-'+code).value='';saveState();renderCurrencyPage();showToast(code+' 帶出金額已更新為 '+val.toLocaleString());
-}
-function setRemain(code){
-  const val=parseFloat(document.getElementById('remain-input-'+code).value);if(isNaN(val)){showToast('請輸入有效金額');return;}
-  const cur=currencies.find(c=>c.code===code);if(cur)cur.remaining=val;
-  const el=document.getElementById('remain-val-'+code);if(el)el.textContent=val.toLocaleString();
-  document.getElementById('remain-input-'+code).value='';saveState();showToast(code+' 餘額已修正');
-}
-async function submitExchange(){
-  const date=document.getElementById('ex-date').value,fromCurr=document.getElementById('ex-from-curr').value;
-  const fromAmt=parseFloat(document.getElementById('ex-from-amt').value),toCurr=document.getElementById('ex-to-curr').value;
-  const toAmt=parseFloat(document.getElementById('ex-to-amt').value),note=document.getElementById('ex-note').value.trim();
-  if(!date||isNaN(fromAmt)||!fromAmt||isNaN(toAmt)||!toAmt){showToast('請填寫完整換匯資料');return;}
-  const cur=currencies.find(c=>c.code===toCurr);if(cur)cur.remaining+=toAmt;
-  exchangeHistory.push({date,fromCurr,fromAmount:fromAmt,toCurr,toAmount:toAmt,note});
-  saveState();renderCurrencyPage();
-  document.getElementById('ex-from-amt').value='';document.getElementById('ex-to-amt').value='';document.getElementById('ex-note').value='';
-  const btn=document.getElementById('exchange-btn');btn.disabled=true;btn.textContent='同步中…';setSyncStatus('syncing');
-  try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'exchange',trip:currentTrip,date,fromCurr,fromAmount:fromAmt,toCurr,toAmount:toAmt,note})});
-    setSyncStatus('ok');showToast('✓ '+fromAmt.toLocaleString()+' '+fromCurr+' → '+toAmt.toLocaleString()+' '+toCurr);
-    fetchBalancesFromSheet().then(()=>renderCurrencyPage());
-  }catch(e){setSyncStatus('error');showToast('換匯已記錄，但同步失敗');}
-  finally{btn.disabled=false;btn.textContent='記錄換匯 ✓';}
-}
-async function submitEntry(){
-  const curr=document.getElementById('curr-pill-text').textContent,amount=parseFloat(document.getElementById('f-amount').value);
-  const catBtn=document.querySelector('.cat-btn.on');
-  if(isNaN(amount)||amount<=0){showToast('請輸入金額');return;}if(!catBtn){showToast('請選擇類別');return;}
-  const cat=catBtn.dataset.val,item=document.getElementById('f-item').value.trim();
-  const date=document.getElementById('f-date').value||new Date().toISOString().split('T')[0];
-  const payMethod=document.getElementById('pill-pay-text').textContent,timing=document.getElementById('pill-timing-text').textContent;
-  const payerText=document.getElementById('pill-payer-text').textContent,split=document.getElementById('pill-split-text').textContent;
-  const payer=payerText.replace(' 支付','');
-  let twd=0;if(curr==='TWD')twd=amount;else twd=Math.round(amount*(parseFloat(document.getElementById('f-rate').value)||0));
-  if(!twd&&curr!=='TWD'){showToast('請確認匯率');return;}
-  const rate=curr==='TWD'?'1':(document.getElementById('f-rate').value||'1');
-  if(payMethod==='現金'){
-    if(curr==='TWD'){parentCurrencies['TWD']=Math.max(0,(parentCurrencies['TWD']||0)-amount);}
-    else if(curr==='USD'&&parentCurrencies['USD']!==undefined&&currencies.findIndex(x=>x.code==='USD')<0){parentCurrencies['USD']=Math.max(0,(parentCurrencies['USD']||0)-amount);}
-    else{const c=currencies.find(x=>x.code===curr);if(c){c.remaining=Math.max(0,c.remaining-amount);const el=document.getElementById('remain-val-'+curr);if(el)el.textContent=c.remaining.toLocaleString();}}
+window.pinDel = pinDel;
+
+function updatePinDots() {
+  for (let i=0;i<4;i++) {
+    document.getElementById('pd'+i).classList.toggle('filled', i < pinVal.length);
   }
-  const isBefore=timing==='出發前';
-  if(split==='共用'){totals.ab+=twd;if(isBefore)totals.abBefore+=twd;else totals.abDuring+=twd;}
-  else if(split==='三口'){totals.a+=twd;if(isBefore)totals.aBefore+=twd;else totals.aDuring+=twd;}
-  else{totals.b+=twd;if(isBefore)totals.bBefore+=twd;else totals.bDuring+=twd;}
-  if(payer===nameA)payerTotals.a+=twd;else if(payer===nameB)payerTotals.b+=twd;
-  entryCount++;updateTotalsUI();document.getElementById('info-count').textContent=entryCount+' 筆';
-  lastPay=payMethod;lastTiming=timing;lastPayer=payerText;lastSplit=split;saveState();
-  document.getElementById('f-amount').value='';document.getElementById('f-item').value='';
-  document.getElementById('twd-preview')&&(document.getElementById('twd-preview').textContent='$0');
-  const btn=document.getElementById('submit-btn');btn.disabled=true;btn.textContent='✓ 已送出！';btn.classList.add('success');
-  setSyncStatus('syncing');document.getElementById('submit-error').classList.remove('show');
-  const payload={type:'expense',trip:currentTrip,date,category:cat,item,currency:curr,amount,rate,twd,payMethod,payer,split,timing,note:''};
-  try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    setSyncStatus('ok');window._lastFailedPayload=null;
-    if(payMethod==='現金')fetchBalancesFromSheet();
-  }catch(e){setSyncStatus('error');window._lastFailedPayload=payload;document.getElementById('submit-error').classList.add('show');}
-  setTimeout(()=>{btn.disabled=false;btn.textContent='送出記帳 ✓';btn.classList.remove('success');document.getElementById('f-amount').focus();},1500);
 }
-function updateTotalsUI(){
-  document.getElementById('total-a').textContent='$'+totals.a.toLocaleString();
-  document.getElementById('total-b').textContent='$'+totals.b.toLocaleString();
-  document.getElementById('total-ab').textContent='$'+totals.ab.toLocaleString();
-  document.getElementById('ab-before').textContent='$'+totals.abBefore.toLocaleString();
-  document.getElementById('ab-during').textContent='$'+totals.abDuring.toLocaleString();
-  document.getElementById('payer-total-a').textContent='$'+payerTotals.a.toLocaleString();
-  document.getElementById('payer-total-b').textContent='$'+payerTotals.b.toLocaleString();
-  const sc=document.getElementById('summary-count');if(sc)sc.textContent=entryCount+' 筆';
+
+// 設定 PIN 畫面提示
+if (isFirstTime) {
+  document.getElementById('pin-sub-text').textContent = '設定四位數 PIN 碼';
 }
-async function fetchConfigFromSheet(){
-  try{const res=await fetch(SCRIPT_URL+'?action=getConfig');const data=await res.json();if(data.nameA)nameA=data.nameA;if(data.nameB)nameB=data.nameB;if(data.trip)currentTrip=data.trip;}catch(e){}
+
+// ===== 初始化 =====
+async function initApp() {
+  await fetchRates();
+  loadTrips();
 }
-async function fetchExchangeHistoryFromSheet(){return fetchBalancesFromSheet();}
-async function fetchTotalsFromSheet(){
-  try{
-    setSyncStatus('syncing');
-    const url=SCRIPT_URL+'?action=getTotals&trip='+encodeURIComponent(currentTrip)+'&nameA='+encodeURIComponent(nameA)+'&nameB='+encodeURIComponent(nameB);
-    const res=await fetch(url);const data=await res.json();
-    if(data.totals){totals=data.totals;['abBefore','abDuring','aBefore','aDuring','bBefore','bDuring'].forEach(k=>{totals[k]=totals[k]||0;});}
-    if(data.payerTotals)payerTotals=data.payerTotals;
-    if(data.entryCount!==undefined)entryCount=data.entryCount;
-    saveState();updateTotalsUI();
-    document.getElementById('info-count').textContent=entryCount+' 筆';
-    const sc=document.getElementById('summary-count');if(sc)sc.textContent=entryCount+' 筆';
+
+// ===== 載入旅程 =====
+function loadTrips() {
+  onSnapshot(collection(db,'trips'), snap => {
+    state.trips = [];
+    snap.forEach(d => state.trips.push({id:d.id,...d.data()}));
+    state.trips.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+    // 如果沒有旅程，顯示空狀態
+    if (state.trips.length === 0) {
+      document.getElementById('empty-screen').classList.remove('hidden');
+      return;
+    }
+    document.getElementById('empty-screen').classList.add('hidden');
+    // 恢復上次使用的旅程
+    const lastTrip = localStorage.getItem('howmuch_current_trip');
+    if (lastTrip && state.trips.find(t=>t.id===lastTrip)) {
+      state.currentTripId = lastTrip;
+    } else {
+      state.currentTripId = state.trips[0].id;
+    }
+    renderTrips();
+    loadTripData(state.currentTripId);
+  });
+}
+
+function loadTripData(tripId) {
+  // 清除舊監聽
+  if (state.listeners.records) state.listeners.records();
+  if (state.listeners.exchanges) state.listeners.exchanges();
+
+  state.currentTripId = tripId;
+  localStorage.setItem('howmuch_current_trip', tripId);
+
+  // 監聽消費紀錄
+  const recQuery = query(collection(db,'trips',tripId,'records'), orderBy('timestamp','desc'));
+  state.listeners.records = onSnapshot(recQuery, snap => {
+    state.records = [];
+    snap.forEach(d => state.records.push({id:d.id,...d.data()}));
+    renderOverview();
+    renderRecords();
     setSyncStatus('ok');
-  }catch(e){setSyncStatus('error');}
-}
-function copyInviteLink(){
-  const base=window.location.href.split('?')[0],link=base+'?trip='+encodeURIComponent(currentTrip);
-  navigator.clipboard.writeText(link).then(()=>{const btn=document.getElementById('invite-btn');btn.textContent='✓ 已複製！';setTimeout(()=>btn.textContent='📋 複製邀請連結',2000);}).catch(()=>{prompt('請手動複製這個連結：',link);});
-}
-async function loadTripFromConfig(data){
-  nameA=data.nameA||'A';nameB=data.nameB||'B';currentTrip=data.trip||'';
-  try{const res=await fetch(SCRIPT_URL+'?action=getCurrencies&trip='+encodeURIComponent(currentTrip));const d=await res.json();if(d.currencies&&d.currencies.length){currencies=d.currencies.map(c=>({...c,remaining:c.init||0}));}}catch(e){}
-  parentCurrencies={TWD:0,USD:0};totals={a:0,b:0,ab:0,abBefore:0,abDuring:0,aBefore:0,aDuring:0,bBefore:0,bDuring:0};
-  payerTotals={a:0,b:0};entryCount=0;exchangeHistory=[];
-  if(!currencies.length)currencies=[{code:'JPY',flag:'🇯🇵',name:'日圓',init:0,remaining:0}];
-  applySetup(false);fetchTotalsFromSheet();showToast('✓ 已加入「'+currentTrip+'」');
-}
-async function checkUrlParams(){
-  const params=new URLSearchParams(window.location.search),tripParam=params.get('trip');
-  if(tripParam&&!setupDone){
-    showToast('正在載入旅行設定…');
-    try{
-      const res=await fetch(SCRIPT_URL+'?action=getConfig');const data=await res.json();
-      if(data.trip===tripParam&&data.nameA&&data.nameB){await loadTripFromConfig(data);}
-      else{showToast('找不到此旅行，請聯絡旅伴確認連結');}
-    }catch(e){showToast('載入失敗，請檢查網路');}
+  }, () => setSyncStatus('error'));
+
+  // 監聽換匯紀錄
+  const exQuery = query(collection(db,'trips',tripId,'exchanges'), orderBy('timestamp','desc'));
+  state.listeners.exchanges = onSnapshot(exQuery, snap => {
+    state.exchanges = [];
+    snap.forEach(d => state.exchanges.push({id:d.id,...d.data()}));
+    renderExchange();
+  });
+
+  // 更新新增頁的旅程名稱和預設幣種
+  const trip = state.trips.find(t=>t.id===tripId);
+  if (trip) {
+    document.getElementById('add-trip-name').textContent = trip.name;
+    const lastCur = localStorage.getItem('howmuch_last_currency_'+tripId);
+    state.addCurrency = lastCur || (trip.currencies && trip.currencies[0]) || 'TWD';
+    document.getElementById('amt-cur-display').textContent = state.addCurrency;
+    updateAmtConverted();
   }
 }
-async function retryLastSubmit(){
-  if(!window._lastFailedPayload){showToast('沒有待重試的資料');return;}
-  setSyncStatus('syncing');
-  try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(window._lastFailedPayload)});
-    setSyncStatus('ok');document.getElementById('submit-error').classList.remove('show');window._lastFailedPayload=null;showToast('✓ 同步成功');
-  }catch(e){setSyncStatus('error');showToast('仍然失敗，請檢查網路');}
+
+// ===== 匯率 =====
+async function fetchRates() {
+  try {
+    const res = await fetch('https://api.frankfurter.app/latest?base=TWD');
+    const data = await res.json();
+    // Frankfurter 給的是「1 TWD = X 外幣」，我們需要「1 外幣 = Y TWD」
+    state.rates = {};
+    for (const [cur, rate] of Object.entries(data.rates)) {
+      state.rates[cur] = 1 / rate;
+    }
+    state.rates['TWD'] = 1;
+  } catch(e) {
+    console.warn('匯率載入失敗，使用預設值');
+    state.rates = {TWD:1,JPY:0.22,EUR:35.8,USD:32.5,KRW:0.024,THB:0.9,VND:0.0013,PHP:0.56,GBP:40.5,AUD:20.5,HKD:4.2,SGD:24.2};
+  }
 }
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
-window.addEventListener('DOMContentLoaded',async()=>{
-  initAllCurrGrids();
-  if(loadState()&&setupDone){await fetchConfigFromSheet();applySetup(false);fetchTotalsFromSheet();}
-  else{await checkUrlParams();}
-});
+
+function getRate(currency) {
+  return state.rates[currency] || 1;
+}
+
+function toTWD(amount, currency) {
+  return Math.round(amount * getRate(currency));
+}
+
+// ===== 同步狀態 =====
+function setSyncStatus(status) {
+  const dot = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-label');
+  dot.className = 'sync-dot' + (status==='error'?' error':status==='syncing'?' syncing':'');
+  label.textContent = status==='error'?'同步失敗':status==='syncing'?'同步中...':'已同步';
+}
+
+// ===== 渲染總覽 =====
+function renderOverview() {
+  const shared = state.records.filter(r=>r.splitType==='共用');
+  const sanPriv = state.records.filter(r=>r.splitType==='三口私費');
+  const qiPriv = state.records.filter(r=>r.splitType==='七元私費');
+
+  const totalShared = shared.reduce((s,r)=>s+r.twd,0);
+  const beforeShared = shared.filter(r=>r.period==='出發前').reduce((s,r)=>s+r.twd,0);
+  const duringShared = shared.filter(r=>r.period==='旅遊中').reduce((s,r)=>s+r.twd,0);
+  const sanPaid = shared.filter(r=>r.payer==='三口').reduce((s,r)=>s+r.twd,0);
+  const qiPaid = shared.filter(r=>r.payer==='七元').reduce((s,r)=>s+r.twd,0);
+  const sanPrivTotal = sanPriv.reduce((s,r)=>s+r.twd,0);
+  const qiPrivTotal = qiPriv.reduce((s,r)=>s+r.twd,0);
+  const totalCount = state.records.length;
+
+  document.getElementById('ov-total').textContent = '$'+totalShared.toLocaleString();
+  document.getElementById('ov-count').textContent = '共 '+totalCount+' 筆';
+  document.getElementById('ov-before').textContent = '$'+beforeShared.toLocaleString();
+  document.getElementById('ov-during').textContent = '$'+duringShared.toLocaleString();
+  document.getElementById('ov-san-paid').textContent = '$'+sanPaid.toLocaleString();
+  document.getElementById('ov-qi-paid').textContent = '$'+qiPaid.toLocaleString();
+  document.getElementById('ov-san-priv').textContent = '$'+sanPrivTotal.toLocaleString();
+  document.getElementById('ov-qi-priv').textContent = '$'+qiPrivTotal.toLocaleString();
+
+  const maxPaid = Math.max(sanPaid, qiPaid, 1);
+  document.getElementById('bar-san').style.width = (sanPaid/maxPaid*100)+'%';
+  document.getElementById('bar-qi').style.width = (qiPaid/maxPaid*100)+'%';
+  const maxPriv = Math.max(sanPrivTotal, qiPrivTotal, 1);
+  document.getElementById('bar-san-priv').style.width = (sanPrivTotal/maxPriv*100)+'%';
+  document.getElementById('bar-qi-priv').style.width = (qiPrivTotal/maxPriv*100)+'%';
+
+  // 圓餅圖
+  const cats = {};
+  state.records.forEach(r => { cats[r.category] = (cats[r.category]||0) + r.twd; });
+  const total = Object.values(cats).reduce((s,v)=>s+v,0) || 1;
+  const sorted = Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+
+  // SVG 圓餅
+  const svg = document.getElementById('pie-svg');
+  const r = 28, cx = 40, cy = 40, circ = 2*Math.PI*r;
+  let offset = 0;
+  let svgHtml = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#E3F6FB" stroke-width="14"/>`;
+  sorted.forEach(([cat,val],i) => {
+    const pct = val/total;
+    const dash = pct*circ;
+    svgHtml += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${PIE_COLORS[i%PIE_COLORS.length]}" stroke-width="14" stroke-dasharray="${dash} ${circ}" stroke-dashoffset="${-(offset*circ - circ/4)}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    offset += pct;
+  });
+  svg.innerHTML = svgHtml;
+
+  // 圖例
+  const legend = document.getElementById('pie-legend');
+  legend.innerHTML = sorted.slice(0,5).map(([cat,val],i) =>
+    `<div class="leg-item"><span class="leg-dot" style="background:${PIE_COLORS[i%PIE_COLORS.length]}"></span>${cat}<div class="leg-right"><div class="leg-amt">$${val.toLocaleString()}</div><div class="leg-pct">${Math.round(val/total*100)}%</div></div></div>`
+  ).join('');
+  if (sorted.length===0) legend.innerHTML = '<div style="color:var(--text2);font-size:12px">尚無消費記錄</div>';
+}
+
+// ===== 渲染紀錄 =====
+function renderRecords() {
+  let filtered = [...state.records];
+  if (state.filterCat !== '全部') filtered = filtered.filter(r=>r.category===state.filterCat);
+  if (state.searchText) filtered = filtered.filter(r=>(r.description||'').includes(state.searchText)||(r.category||'').includes(state.searchText));
+
+  const container = document.getElementById('rec-container');
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-rec"><i class="ti ti-receipt-off"></i>${state.searchText||state.filterCat!=='全部'?'找不到符合的記錄':'還沒有消費記錄'}</div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="rec-list">${filtered.map(r => {
+    const isTWD = r.currency === 'TWD';
+    const oriLine = isTWD ? '' : `<div class="rec-ori">${r.currency} ${Number(r.amount).toLocaleString()}</div>`;
+    const badgeClass = r.splitType==='共用'?'badge-shared':r.splitType==='七元私費'?'badge-qi':'badge-san';
+    const badgeText = r.splitType==='三口私費'?'三口':r.splitType==='七元私費'?'七元':'共用';
+    const iconBg = r.splitType==='七元私費'?'background:var(--warm-light)':'background:var(--brand-light)';
+    const iconColor = r.splitType==='七元私費'?'color:var(--warm-dark)':'color:var(--brand-dark)';
+    return `<div class="rec-row" id="rrow-${r.id}">
+      <div class="action-btns">
+        <div class="action-edit" onclick="openEditView('${r.id}')"><i class="ti ti-edit"></i>編輯</div>
+        <div class="action-delete" onclick="deleteRecord('${r.id}')"><i class="ti ti-trash"></i>刪除</div>
+      </div>
+      <div class="rec-inner" id="rinn-${r.id}" onmousedown="swipeStart(event,'rinn-${r.id}')" onmouseup="swipeEnd(event,'rinn-${r.id}')" ontouchstart="swipeStart(event,'rinn-${r.id}')" ontouchend="swipeEnd(event,'rinn-${r.id}')">
+        <div class="rec-icon" style="${iconBg}"><span style="font-size:16px">${CAT_ICONS[r.category]||'📦'}</span></div>
+        <div class="rec-info">
+          <div class="rec-name">${r.description||r.category}<span class="type-badge ${badgeClass}">${badgeText}</span></div>
+          <div class="rec-meta">${r.category} · ${r.paymentMethod} · ${r.period} · ${r.date}</div>
+        </div>
+        <div class="rec-right">
+          <div class="rec-amt">$${Number(r.twd).toLocaleString()}</div>
+          ${oriLine}
+          <div class="rec-ori">${r.payer}付</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ===== 渲染換匯 =====
+function renderExchange() {
+  const trip = state.trips.find(t=>t.id===state.currentTripId);
+  if (!trip) return;
+
+  // 計算當地幣已花多少
+  const localSpent = {};
+  state.records.forEach(r => {
+    if (r.currency !== 'TWD') {
+      localSpent[r.currency] = (localSpent[r.currency]||0) + Number(r.amount);
+    }
+  });
+
+  // 當地幣餘額
+  const localCard = document.getElementById('local-bal-card');
+  if (!trip.currencies || trip.currencies.length===0) {
+    localCard.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:8px 0">尚無當地幣設定</div>';
+  } else {
+    localCard.innerHTML = trip.currencies.map(cur => {
+      const brought = trip.currencyAmounts?.[cur] || 0;
+      const spent = localSpent[cur] || 0;
+      const remain = brought - spent;
+      const flag = CUR_FLAGS[cur]||'💱';
+      return `<div class="bal-item"><div class="bal-left">${flag} ${cur}</div><div class="bal-right"><div class="bal-remain">${cur==='KRW'||cur==='VND'||cur==='JPY'?Math.round(remain).toLocaleString():remain.toFixed(2)} 剩餘</div><div class="bal-detail">帶出 ${brought} · 已花 ${spent.toFixed(cur==='KRW'||cur==='VND'||cur==='JPY'?0:2)}</div></div></div>`;
+    }).join('');
+  }
+
+  // 母幣餘額（計算換匯已用多少台幣/美金）
+  const twdUsed = state.exchanges.filter(e=>e.fromCurrency==='TWD').reduce((s,e)=>s+Number(e.fromAmount),0);
+  const usdUsed = state.exchanges.filter(e=>e.fromCurrency==='USD').reduce((s,e)=>s+Number(e.fromAmount),0);
+  const twdBrought = trip.twd || 0;
+  const usdBrought = trip.usd || 0;
+  const homeCard = document.getElementById('home-bal-card');
+  homeCard.innerHTML = `
+    <div class="bal-item"><div class="bal-left">🇹🇼 台幣 TWD</div><div class="bal-right"><div class="bal-remain">$${(twdBrought-twdUsed).toLocaleString()} 剩餘</div><div class="bal-detail">帶出 $${twdBrought.toLocaleString()} · 已換出 $${twdUsed.toLocaleString()}</div></div></div>
+    <div class="bal-item"><div class="bal-left">🇺🇸 美金 USD</div><div class="bal-right"><div class="bal-remain">$${(usdBrought-usdUsed).toFixed(2)} 剩餘</div><div class="bal-detail">帶出 $${usdBrought} · 已換出 $${usdUsed.toFixed(2)}</div></div></div>`;
+
+  // 換匯紀錄
+  const exCard = document.getElementById('exchange-list-card');
+  if (state.exchanges.length===0) {
+    exCard.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:8px 0">尚無換匯紀錄</div>';
+  } else {
+    exCard.innerHTML = state.exchanges.map(e => {
+      const fromFlag = CUR_FLAGS[e.fromCurrency]||'💱';
+      const toFlag = CUR_FLAGS[e.toCurrency]||'💱';
+      return `<div class="ex-row" id="exrow-${e.id}">
+        <div class="action-btns">
+          <div class="action-edit" onclick="openExchangeEdit('${e.id}')"><i class="ti ti-edit"></i>編輯</div>
+          <div class="action-delete" onclick="deleteExchange('${e.id}')"><i class="ti ti-trash"></i>刪除</div>
+        </div>
+        <div class="ex-inner" id="exinn-${e.id}" onmousedown="swipeStart(event,'exinn-${e.id}')" onmouseup="swipeEnd(event,'exinn-${e.id}')" ontouchstart="swipeStart(event,'exinn-${e.id}')" ontouchend="swipeEnd(event,'exinn-${e.id}')">
+          <div><div class="ex-main">${fromFlag} ${e.fromCurrency} ${Number(e.fromAmount).toLocaleString()} → ${toFlag} ${e.toCurrency} ${Number(e.toAmount).toLocaleString()}</div><div class="ex-sub">${e.date}${e.note?' · '+e.note:''}</div></div>
+          <i class="ti ti-chevron-right" style="color:var(--text2)"></i>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ===== 渲染旅程列表 =====
+function renderTrips() {
+  const card = document.getElementById('trips-list-card');
+  card.innerHTML = state.trips.map(t => {
+    const isCurrent = t.id === state.currentTripId;
+    const count = ''; // 不在這裡即時算
+    return `<div class="trip-item" onclick="selectTrip('${t.id}')">
+      <div>
+        <div class="trip-name-t">${t.name}</div>
+        <div class="trip-meta-t">${t.createdDate||''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${isCurrent?'<span class="trip-badge">使用中</span>':''}
+        ${!isCurrent?`<button onclick="event.stopPropagation();confirmDeleteTrip('${t.id}')" style="background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:13px;padding:4px"><i class="ti ti-trash"></i></button>`:''}
+        ${!isCurrent?'<i class="ti ti-chevron-right" style="color:var(--text2)"></i>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== 切換旅程 =====
+window.selectTrip = function(tripId) {
+  if (tripId === state.currentTripId) return;
+  loadTripData(tripId);
+  renderTrips();
+};
+
+// ===== 新增消費 =====
+window.onAmtInput = function(val) {
+  state.addAmount = val;
+  document.getElementById('amt-display').textContent = val||'0';
+  updateAmtConverted();
+};
+
+function updateAmtConverted() {
+  const conv = document.getElementById('amt-converted');
+  if (!state.addAmount || state.addCurrency === 'TWD') {
+    conv.textContent = '';
+    return;
+  }
+  const twd = toTWD(parseFloat(state.addAmount)||0, state.addCurrency);
+  conv.textContent = '≈ $'+twd.toLocaleString()+' TWD';
+}
+
+window.focusAmtInput = function() {
+  document.getElementById('amt-hidden-input').focus();
+};
+
+window.selectCat = function(el) {
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+};
+
+const CHIP_OPTIONS = {
+  pay: ['刷卡','現金'],
+  period: ['旅遊中','出發前'],
+  payer: ['三口 支付','七元 支付'],
+  split: ['共用','三口私費','七元私費'],
+};
+
+window.toggleChip = function(key) {
+  const opts = CHIP_OPTIONS[key];
+  const cur = state.chips[key];
+  const idx = opts.indexOf(cur);
+  state.chips[key] = opts[(idx+1)%opts.length];
+  document.getElementById('chip-'+key).textContent = state.chips[key];
+};
+
+window.submitRecord = async function() {
+  if (!state.currentTripId) { alert('請先選擇旅程'); return; }
+  const amt = parseFloat(state.addAmount);
+  if (!amt || amt <= 0) { alert('請輸入金額'); return; }
+
+  const cat = document.querySelector('.cat-btn.on')?.dataset.cat || '其他';
+  const desc = document.getElementById('add-desc').value.trim();
+  const twd = toTWD(amt, state.addCurrency);
+  const rate = getRate(state.addCurrency);
+
+  const record = {
+    amount: amt,
+    currency: state.addCurrency,
+    twd,
+    rate,
+    description: desc,
+    category: cat,
+    paymentMethod: state.chips.pay,
+    period: state.chips.period,
+    payer: state.chips.payer.replace(' 支付',''),
+    splitType: state.chips.split,
+    date: state.addDate,
+    timestamp: Date.now(),
+  };
+
+  setSyncStatus('syncing');
+  try {
+    const docRef = await addDoc(collection(db,'trips',state.currentTripId,'records'), record);
+    // 寫入試算表
+    const trip = state.trips.find(t=>t.id===state.currentTripId);
+    callScript({action:'addRecord', tripName:trip?.name||'旅程', recordId:docRef.id, ...record});
+    // 儲存上次幣種
+    localStorage.setItem('howmuch_last_currency_'+state.currentTripId, state.addCurrency);
+    // 成功動畫
+    showSubmitSuccess();
+  } catch(e) {
+    setSyncStatus('error');
+    alert('記錄失敗，請重試');
+  }
+};
+
+function showSubmitSuccess() {
+  const block = document.getElementById('amt-block');
+  block.classList.remove('normal');
+  block.classList.add('success');
+  setTimeout(() => {
+    block.classList.remove('success');
+    block.classList.add('normal');
+    // 清空
+    state.addAmount = '';
+    document.getElementById('amt-display').textContent = '0';
+    document.getElementById('amt-hidden-input').value = '';
+    document.getElementById('add-desc').value = '';
+    document.getElementById('amt-converted').textContent = '';
+  }, 1500);
+}
+
+window.resetAddForm = function() {
+  state.addAmount = '';
+  document.getElementById('amt-display').textContent = '0';
+  document.getElementById('amt-hidden-input').value = '';
+  document.getElementById('add-desc').value = '';
+  document.getElementById('amt-converted').textContent = '';
+};
+
+// ===== 日期選擇 =====
+window.openDatePicker = function() {
+  const input = document.getElementById('hidden-date-input');
+  input.value = state.addDate;
+  input.showPicker ? input.showPicker() : input.click();
+};
+
+window.onDateChange = function(val) {
+  state.addDate = val;
+  const d = new Date(val);
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('add-date-label').textContent = val===today?'今天':`${d.getMonth()+1}/${d.getDate()}`;
+};
+
+// ===== 幣種選擇器 =====
+window.openCurPicker = function(context) {
+  state.curPickerContext = context;
+  const grid = document.getElementById('cur-grid');
+  grid.innerHTML = CURRENCIES.map(c =>
+    `<div class="cur-item${c.code===state.addCurrency&&context==='add'?' selected':''}" onclick="selectCurrency('${c.code}')">
+      <div class="cur-flag">${c.flag}</div>
+      <div class="cur-code">${c.code}</div>
+      <div class="cur-name">${c.name}</div>
+    </div>`
+  ).join('') +
+  `<div class="cur-item cur-manual" onclick="showManualCurInput()">
+    <div class="cur-flag">✏️</div>
+    <div class="cur-code">手動</div>
+    <div class="cur-name">輸入代碼</div>
+  </div>`;
+  document.getElementById('cur-manual-row').style.display='none';
+  document.getElementById('cur-picker').classList.remove('hidden');
+};
+
+window.closeCurPicker = function(e) {
+  if (e.target.id==='cur-picker') document.getElementById('cur-picker').classList.add('hidden');
+};
+
+window.selectCurrency = function(code) {
+  if (state.curPickerContext === 'add') {
+    state.addCurrency = code;
+    document.getElementById('amt-cur-display').textContent = code;
+    updateAmtConverted();
+  }
+  document.getElementById('cur-picker').classList.add('hidden');
+};
+
+window.showManualCurInput = function() {
+  document.getElementById('cur-manual-row').style.display='flex';
+};
+
+window.confirmManualCur = function() {
+  const val = document.getElementById('cur-manual-input').value.trim().toUpperCase();
+  if (val.length < 2) return;
+  selectCurrency(val);
+};
+
+// ===== 搜尋/篩選 =====
+window.filterRecords = function() {
+  state.searchText = document.getElementById('search-input').value.trim();
+  renderRecords();
+};
+
+window.selectFilter = function(el) {
+  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  state.filterCat = el.dataset.cat;
+  renderRecords();
+};
+
+// ===== 滑動手勢 =====
+let swipeData = {startX:0,startY:0,id:null,isMouse:false};
+let currentSwiped = null;
+
+window.swipeStart = function(e,id) {
+  const x = e.touches ? e.touches[0].clientX : e.clientX;
+  const y = e.touches ? e.touches[0].clientY : e.clientY;
+  swipeData = {startX:x, startY:y, id, isMouse:!e.touches};
+};
+
+window.swipeEnd = function(e,id) {
+  const x = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+  const y = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+  const dx = x - swipeData.startX;
+  const dy = y - swipeData.startY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+    if (dx < 0) {
+      if (currentSwiped && currentSwiped !== id) {
+        const prev = document.getElementById(currentSwiped);
+        if (prev) prev.classList.remove('swiped');
+      }
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('swiped'); currentSwiped = id; }
+    } else {
+      const el = document.getElementById(id);
+      if (el) { el.classList.remove('swiped'); if(currentSwiped===id) currentSwiped=null; }
+    }
+  }
+};
+
+// ===== 編輯紀錄 =====
+window.openEditView = function(recordId) {
+  const r = state.records.find(x=>x.id===recordId);
+  if (!r) return;
+  state.editingRecordId = recordId;
+  document.getElementById('edit-amt').value = r.amount;
+  document.getElementById('edit-cur').value = r.currency;
+  document.getElementById('edit-desc').value = r.description||'';
+  document.getElementById('edit-cat').value = r.category;
+  document.getElementById('edit-pay').value = r.paymentMethod;
+  document.getElementById('edit-period').value = r.period;
+  document.getElementById('edit-payer').value = r.payer;
+  document.getElementById('edit-split').value = r.splitType;
+  document.getElementById('edit-date').value = r.date;
+  document.getElementById('edit-record-id').value = recordId;
+  document.getElementById('rec-list-view').style.display='none';
+  document.getElementById('rec-edit-view').style.display='block';
+};
+
+window.closeEditView = function() {
+  document.getElementById('rec-list-view').style.display='block';
+  document.getElementById('rec-edit-view').style.display='none';
+  state.editingRecordId = null;
+};
+
+window.saveEditRecord = async function() {
+  const id = state.editingRecordId;
+  if (!id) return;
+  const amt = parseFloat(document.getElementById('edit-amt').value);
+  const cur = document.getElementById('edit-cur').value;
+  const twd = toTWD(amt, cur);
+  const updates = {
+    amount: amt, currency: cur, twd,
+    rate: getRate(cur),
+    description: document.getElementById('edit-desc').value,
+    category: document.getElementById('edit-cat').value,
+    paymentMethod: document.getElementById('edit-pay').value,
+    period: document.getElementById('edit-period').value,
+    payer: document.getElementById('edit-payer').value,
+    splitType: document.getElementById('edit-split').value,
+    date: document.getElementById('edit-date').value,
+  };
+  setSyncStatus('syncing');
+  try {
+    await setDoc(doc(db,'trips',state.currentTripId,'records',id), updates, {merge:true});
+    const trip = state.trips.find(t=>t.id===state.currentTripId);
+    callScript({action:'editRecord', tripName:trip?.name||'旅程', recordId:id, ...updates});
+    closeEditView();
+  } catch(e) { setSyncStatus('error'); alert('儲存失敗'); }
+};
+
+window.deleteRecord = async function(recordId) {
+  if (!confirm('確定要刪除這筆消費？')) return;
+  setSyncStatus('syncing');
+  try {
+    await deleteDoc(doc(db,'trips',state.currentTripId,'records',recordId));
+    const trip = state.trips.find(t=>t.id===state.currentTripId);
+    callScript({action:'deleteRecord', tripName:trip?.name||'旅程', recordId});
+  } catch(e) { setSyncStatus('error'); }
+};
+
+window.deleteCurrentRecord = function() {
+  if (state.editingRecordId) deleteRecord(state.editingRecordId).then(()=>closeEditView());
+};
+
+// ===== 換匯 =====
+window.openExchangeSheet = function() {
+  document.getElementById('exchange-sheet-title').textContent = '新增換匯';
+  document.getElementById('ex-from-amt').value = '';
+  document.getElementById('ex-to-amt').value = '';
+  document.getElementById('ex-note').value = '';
+  document.getElementById('ex-editing-id').value = '';
+  document.getElementById('exchange-sheet').classList.remove('hidden');
+};
+
+window.openExchangeEdit = function(exId) {
+  const e = state.exchanges.find(x=>x.id===exId);
+  if (!e) return;
+  document.getElementById('exchange-sheet-title').textContent = '編輯換匯';
+  document.getElementById('ex-from-cur').value = e.fromCurrency;
+  document.getElementById('ex-from-amt').value = e.fromAmount;
+  document.getElementById('ex-to-cur').value = e.toCurrency;
+  document.getElementById('ex-to-amt').value = e.toAmount;
+  document.getElementById('ex-note').value = e.note||'';
+  document.getElementById('ex-editing-id').value = exId;
+  document.getElementById('exchange-sheet').classList.remove('hidden');
+};
+
+window.saveExchange = async function() {
+  const fromCur = document.getElementById('ex-from-cur').value;
+  const fromAmt = parseFloat(document.getElementById('ex-from-amt').value);
+  const toCur = document.getElementById('ex-to-cur').value;
+  const toAmt = parseFloat(document.getElementById('ex-to-amt').value);
+  const note = document.getElementById('ex-note').value.trim();
+  const editingId = document.getElementById('ex-editing-id').value;
+
+  if (!fromAmt||!toAmt) { alert('請填寫換匯金額'); return; }
+
+  const today = new Date().toISOString().split('T')[0];
+  const data = {fromCurrency:fromCur,fromAmount:fromAmt,toCurrency:toCur,toAmount:toAmt,note,date:today,timestamp:Date.now()};
+
+  setSyncStatus('syncing');
+  try {
+    const trip = state.trips.find(t=>t.id===state.currentTripId);
+    if (editingId) {
+      await setDoc(doc(db,'trips',state.currentTripId,'exchanges',editingId), data, {merge:true});
+      callScript({action:'editExchange', tripName:trip?.name||'旅程', exchangeId:editingId, ...data});
+    } else {
+      const ref = await addDoc(collection(db,'trips',state.currentTripId,'exchanges'), data);
+      callScript({action:'addExchange', tripName:trip?.name||'旅程', exchangeId:ref.id, ...data});
+    }
+    document.getElementById('exchange-sheet').classList.add('hidden');
+  } catch(e) { setSyncStatus('error'); alert('儲存失敗'); }
+};
+
+window.deleteExchange = async function(exId) {
+  if (!confirm('確定要刪除這筆換匯記錄？')) return;
+  setSyncStatus('syncing');
+  try {
+    await deleteDoc(doc(db,'trips',state.currentTripId,'exchanges',exId));
+    const trip = state.trips.find(t=>t.id===state.currentTripId);
+    callScript({action:'deleteExchange', tripName:trip?.name||'旅程', exchangeId:exId});
+  } catch(e) { setSyncStatus('error'); }
+};
+
+// ===== 旅程管理 =====
+window.openNewTripSheet = function() {
+  document.getElementById('new-trip-sheet').classList.remove('hidden');
+  state.tripCurCount = 1;
+  document.getElementById('add-cur-btn').style.display='block';
+  document.getElementById('add-cur-btn').textContent='+ 新增第二種幣種';
+  // 重置多餘的幣種列
+  const rows = document.getElementById('trip-cur-rows');
+  while (rows.children.length > 1) rows.removeChild(rows.lastChild);
+};
+
+window.handleTripCurChange = function(sel, idx) {
+  if (sel.value === 'MANUAL') {
+    const input = document.createElement('input');
+    input.type='text';input.placeholder='輸入幣種代碼，例：HUF';input.maxLength=6;
+    input.style='width:100%;padding:10px 12px;font-size:14px;border:0.5px solid var(--border);border-radius:var(--radius-md);background:var(--bg);color:var(--text);outline:none;text-transform:uppercase';
+    input.id='trip-cur-manual-'+idx;
+    sel.parentNode.replaceChild(input, sel);
+  }
+};
+
+window.addTripCurRow = function() {
+  if (!state.tripCurCount) state.tripCurCount = 1;
+  if (state.tripCurCount >= 3) { document.getElementById('add-cur-btn').style.display='none'; return; }
+  state.tripCurCount++;
+  const n = state.tripCurCount;
+  const opts = ['JPY','EUR','USD','KRW','THB','VND','PHP','GBP','AUD','HKD','SGD','MANUAL'].map(c=>`<option value="${c}">${CUR_FLAGS[c]||'✏️'} ${c} ${CUR_NAMES[c]||'手動輸入'}</option>`).join('');
+  const row = document.createElement('div');
+  row.style.marginTop='8px';
+  row.innerHTML=`<div class="two-col"><div class="sheet-field"><label>幣種 ${n}（選填）</label><select id="trip-cur-${n}" onchange="handleTripCurChange(this,${n})"><option value="">— 不設定 —</option>${opts}</select></div><div class="sheet-field"><label>帶出多少</label><input type="number" inputmode="decimal" id="trip-cur-amt-${n}" placeholder=""></div></div>`;
+  document.getElementById('trip-cur-rows').appendChild(row);
+  const btn = document.getElementById('add-cur-btn');
+  if (n===2) btn.textContent='+ 新增第三種幣種';
+  else btn.style.display='none';
+};
+
+window.saveNewTrip = async function() {
+  const name = document.getElementById('trip-name-input').value.trim();
+  if (!name) { alert('請輸入旅行名稱'); return; }
+  const twd = parseFloat(document.getElementById('trip-twd').value)||0;
+  const usd = parseFloat(document.getElementById('trip-usd').value)||0;
+
+  const currencies = [];
+  const currencyAmounts = {};
+  const count = state.tripCurCount || 1;
+  for (let i=1;i<=count;i++) {
+    const manualInput = document.getElementById('trip-cur-manual-'+i);
+    const selectEl = document.getElementById('trip-cur-'+i);
+    let cur = manualInput ? manualInput.value.trim().toUpperCase() : (selectEl?.value||'');
+    if (!cur || cur==='MANUAL') continue;
+    const amt = parseFloat(document.getElementById('trip-cur-amt-'+i).value)||0;
+    currencies.push(cur);
+    currencyAmounts[cur] = amt;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  const tripData = {name, twd, usd, currencies, currencyAmounts, createdDate:today, createdAt:Date.now()};
+
+  try {
+    const ref = await addDoc(collection(db,'trips'), tripData);
+    callScript({action:'newTrip', tripName:name});
+    document.getElementById('new-trip-sheet').classList.add('hidden');
+    document.getElementById('trip-name-input').value='';
+    // 切換到新旅程
+    setTimeout(()=>selectTrip(ref.id), 500);
+  } catch(e) { alert('建立失敗，請重試'); }
+};
+
+// ===== 刪除旅程（需 PIN 確認）=====
+let deletingTripId = null;
+
+window.confirmDeleteTrip = function(tripId) {
+  deletingTripId = tripId;
+  const trip = state.trips.find(t=>t.id===tripId);
+  document.getElementById('pin-confirm-sub').textContent = `輸入 PIN 碼確認刪除「${trip?.name||''}」`;
+  document.getElementById('pin-confirm-overlay').classList.remove('hidden');
+  state.pinConfirmVal = '';
+  updatePinConfirmDots();
+};
+
+window.pinConfirmInput = function(n) {
+  if (state.pinConfirmVal.length >= 4) return;
+  state.pinConfirmVal += n;
+  updatePinConfirmDots();
+  if (state.pinConfirmVal.length === 4) {
+    const storedPin = localStorage.getItem('howmuch_pin') || '0000';
+    setTimeout(async () => {
+      if (state.pinConfirmVal === storedPin) {
+        closePinConfirm();
+        if (deletingTripId) {
+          // 刪除旅程下所有紀錄
+          const recSnap = await getDocs(collection(db,'trips',deletingTripId,'records'));
+          for (const d of recSnap.docs) await deleteDoc(d.ref);
+          const exSnap = await getDocs(collection(db,'trips',deletingTripId,'exchanges'));
+          for (const d of exSnap.docs) await deleteDoc(d.ref);
+          await deleteDoc(doc(db,'trips',deletingTripId));
+          deletingTripId = null;
+        }
+      } else {
+        document.getElementById('pin-confirm-error').textContent = 'PIN 碼錯誤';
+        state.pinConfirmVal = '';
+        updatePinConfirmDots();
+      }
+    }, 150);
+  }
+};
+
+window.pinConfirmDel = function() {
+  if (!state.pinConfirmVal.length) return;
+  state.pinConfirmVal = state.pinConfirmVal.slice(0,-1);
+  updatePinConfirmDots();
+};
+
+function updatePinConfirmDots() {
+  for (let i=0;i<4;i++) {
+    document.getElementById('pcd'+i).classList.toggle('filled', i < state.pinConfirmVal.length);
+  }
+}
+
+window.closePinConfirm = function() {
+  document.getElementById('pin-confirm-overlay').classList.add('hidden');
+  document.getElementById('pin-confirm-error').textContent='';
+  state.pinConfirmVal='';
+  updatePinConfirmDots();
+};
+
+// ===== Bottom Sheet 關閉 =====
+window.closeSheetOnBg = function(e, id) {
+  if (e.target.classList.contains('sheet-overlay')) {
+    document.getElementById(id).classList.add('hidden');
+  }
+};
+
+// ===== 頁面切換 =====
+window.switchTab = function(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('s-'+name).classList.add('active');
+  const tabs = ['overview','add','records','exchange','trips'];
+  const idx = tabs.indexOf(name);
+  document.querySelectorAll('.tab')[idx]?.classList.add('on');
+  // 關閉任何打開的滑動選項
+  if (currentSwiped) {
+    const el = document.getElementById(currentSwiped);
+    if (el) el.classList.remove('swiped');
+    currentSwiped = null;
+  }
+};
+
+// ===== Apps Script 寫入試算表 =====
+function callScript(data) {
+  fetch(APPS_SCRIPT_URL, {
+    method:'POST',
+    mode:'no-cors',
+    body: JSON.stringify(data),
+  }).catch(()=>{});
+}
+
+state.tripCurCount = 1;
 </script>
 </body>
 </html>
